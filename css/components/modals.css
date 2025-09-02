@@ -70,12 +70,12 @@
 }
 
 .modal-btn-confirm {
-    background: #dc2626;
+    background: #16a34a;
     color: white;
 }
 
 .modal-btn-confirm:hover {
-    background: #b91c1c;
+    background: #15803d;
     transform: translateY(-2px);
 }
 
