@@ -4,11 +4,15 @@ class DebtManager {
         this.draggedPersonElement = null;
         this.draggedDebtElement = null;
         this.currentTheme = this.loadTheme();
+        this.currentLanguage = this.loadLanguage();
+        this.translations = this.getTranslations();
         this.init();
     }
 
     init() {
         this.applyTheme(this.currentTheme);
+        this.applyLanguage(this.currentLanguage);
+        this.setupAddPersonModal();
         this.renderDebts();
         window.addEventListener('beforeunload', () => this.saveData());
     }
@@ -36,6 +40,208 @@ class DebtManager {
         this.saveTheme(newTheme);
     }
 
+    loadLanguage() {
+        return localStorage.getItem('language') || 'pt-BR';
+    }
+
+    saveLanguage(language) {
+        localStorage.setItem('language', language);
+    }
+
+    getTranslations() {
+        return {
+            'pt-BR': {
+                title: '💰 Gerenciador de Dívidas',
+                subtitle: 'Controle suas dívidas com outras pessoas',
+                theme_toggle: 'Alternar modo escuro/claro',
+                total_to_pay: 'Total a Pagar',
+                total_people: 'Total de Pessoas',
+                hidden_debts: 'Dívidas Ocultas',
+                how_to_use: 'Como usar:',
+                instructions: 'Adicione pessoas e suas respectivas dívidas. Use "Editar" para modificar descrição e valor. Use "Duplicar" para facilmente duplicar uma dívida. Marque "Ocultar" para excluir do cálculo total (útil para dívidas pagas ou em disputa).',
+                drag_drop: 'Arrastar e soltar:',
+                drag_instructions: 'Use o ícone ⋮⋮ para arrastar pessoas, ou arraste qualquer linha da tabela para reordenar as dívidas.',
+                add_new_person: '➕ Adicionar Nova Pessoa',
+                clear_all_debts: '🗑️ Limpar Todas as Dívidas',
+                data_saved: '💾 Dados salvos automaticamente',
+                confirm_action: '⚠️ Confirmar Ação',
+                confirm: '🗑️ Confirmar',
+                cancel: '❌ Cancelar',
+                add_new_person_title: '👤 Adicionar Nova Pessoa',
+                person_name_placeholder: 'Nome da pessoa',
+                add: '➕ Adicionar',
+                change_language: 'Alterar idioma',
+                i_owe_to: 'Devo para:',
+                description: 'Descrição',
+                amount: 'Valor',
+                hidden: 'Oculto',
+                actions: 'Ações',
+                visible: 'Visível',
+                edit: '✏️ Editar',
+                duplicate: '🔄 Duplicar',
+                remove: '🗑️ Remover',
+                debt_description_placeholder: 'Descrição da dívida',
+                amount_placeholder: 'Valor (R$)',
+                add_debt: 'Adicionar Dívida',
+                remove_person: 'Remover',
+                edit_debt_description: 'Editar descrição da dívida:',
+                edit_debt_amount: 'Editar valor da dívida (R$):',
+                description_empty_error: 'A descrição não pode estar vazia.',
+                invalid_amount_error: 'Por favor, insira um valor válido maior que zero.',
+                fill_fields_error: 'Por favor, preencha a descrição e um valor válido.',
+                person_exists_error: 'Esta pessoa já existe!',
+                remove_debt_confirm: '🗑️ Remover Dívida',
+                remove_debt_message: 'Tem certeza de que deseja remover a dívida "{description}" no valor de {amount}?',
+                remove_person_confirm: '🗑️ Remover Pessoa',
+                remove_person_message: 'Tem certeza de que deseja remover {person} e todas as {count} dívidas (total: {total})?',
+                clear_all_confirm: '🗑️ Limpar Todas as Dívidas',
+                clear_all_message: 'Tem certeza de que deseja limpar TODAS as dívidas de {count} pessoas (total: {total})? Esta ação não pode ser desfeita.',
+                new_person_name: 'Nome da nova pessoa:',
+                default_action_confirm: 'Tem certeza de que deseja realizar esta ação?'
+            },
+            'en': {
+                title: '💰 Debt Manager',
+                subtitle: 'Track your debts with other people',
+                theme_toggle: 'Toggle dark/light mode',
+                total_to_pay: 'Total to Pay',
+                total_people: 'Total People',
+                hidden_debts: 'Hidden Debts',
+                how_to_use: 'How to use:',
+                instructions: 'Add people and their respective debts. Use "Edit" to modify description and amount. Use "Duplicate" to easily duplicate a debt. Check "Hidden" to exclude from total calculation (useful for paid debts or disputes).',
+                drag_drop: 'Drag and drop:',
+                drag_instructions: 'Use the ⋮⋮ icon to drag people, or drag any table row to reorder debts.',
+                add_new_person: '➕ Add New Person',
+                clear_all_debts: '🗑️ Clear All Debts',
+                data_saved: '💾 Data saved automatically',
+                confirm_action: '⚠️ Confirm Action',
+                confirm: '🗑️ Confirm',
+                cancel: '❌ Cancel',
+                add_new_person_title: '👤 Add New Person',
+                person_name_placeholder: 'Person\'s name',
+                add: '➕ Add',
+                change_language: 'Change language',
+                i_owe_to: 'I owe to:',
+                description: 'Description',
+                amount: 'Amount',
+                hidden: 'Hidden',
+                actions: 'Actions',
+                visible: 'Visible',
+                edit: '✏️ Edit',
+                duplicate: '🔄 Duplicate',
+                remove: '🗑️ Remove',
+                debt_description_placeholder: 'Debt description',
+                amount_placeholder: 'Amount ($)',
+                add_debt: 'Add Debt',
+                remove_person: 'Remove',
+                edit_debt_description: 'Edit debt description:',
+                edit_debt_amount: 'Edit debt amount ($):',
+                description_empty_error: 'Description cannot be empty.',
+                invalid_amount_error: 'Please enter a valid amount greater than zero.',
+                fill_fields_error: 'Please fill in the description and a valid amount.',
+                person_exists_error: 'This person already exists!',
+                remove_debt_confirm: '🗑️ Remove Debt',
+                remove_debt_message: 'Are you sure you want to remove the debt "{description}" valued at {amount}?',
+                remove_person_confirm: '🗑️ Remove Person',
+                remove_person_message: 'Are you sure you want to remove {person} and all {count} debts (total: {total})?',
+                clear_all_confirm: '🗑️ Clear All Debts',
+                clear_all_message: 'Are you sure you want to clear ALL debts from {count} people (total: {total})? This action cannot be undone.',
+                new_person_name: 'Name of the new person:',
+                default_action_confirm: 'Are you sure you want to perform this action?'
+            }
+        };
+    }
+
+    translate(key, params = {}) {
+        let text = this.translations[this.currentLanguage][key] || key;
+        
+        Object.keys(params).forEach(param => {
+            text = text.replace(`{${param}}`, params[param]);
+        });
+        
+        return text;
+    }
+
+    applyLanguage(language) {
+        this.currentLanguage = language;
+        
+        document.documentElement.lang = language;
+        document.title = this.translate('title');
+        
+        const languageFlag = document.getElementById('languageFlag');
+        if (languageFlag) {
+            languageFlag.textContent = language === 'pt-BR' ? '🇧🇷' : '🇺🇸';
+        }
+        
+        document.querySelectorAll('[data-i18n]').forEach(element => {
+            const key = element.getAttribute('data-i18n');
+            element.textContent = this.translate(key);
+        });
+        
+        document.querySelectorAll('[data-i18n-title]').forEach(element => {
+            const key = element.getAttribute('data-i18n-title');
+            element.title = this.translate(key);
+        });
+        
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-i18n-placeholder');
+            element.placeholder = this.translate(key);
+        });
+        
+        this.updateSummary();
+    }
+
+    toggleLanguage() {
+        const newLanguage = this.currentLanguage === 'pt-BR' ? 'en' : 'pt-BR';
+        this.applyLanguage(newLanguage);
+        this.saveLanguage(newLanguage);
+        this.renderDebts();
+    }
+
+    setupAddPersonModal() {
+        const addPersonModal = document.getElementById('addPersonModal');
+        const addPersonConfirm = document.getElementById('addPersonConfirm');
+        const addPersonCancel = document.getElementById('addPersonCancel');
+        const personNameInput = document.getElementById('personNameInput');
+
+        addPersonConfirm.onclick = () => {
+            const personName = personNameInput.value.trim();
+            if (personName && !this.debts[personName]) {
+                this.debts[personName] = [];
+                this.saveData();
+                this.renderDebts();
+                addPersonModal.classList.remove('show');
+                personNameInput.value = '';
+            } else if (this.debts[personName]) {
+                alert(this.translate('person_exists_error'));
+            }
+        };
+
+        addPersonCancel.onclick = () => {
+            addPersonModal.classList.remove('show');
+            personNameInput.value = '';
+        };
+
+        addPersonModal.onclick = (e) => {
+            if (e.target === addPersonModal) {
+                addPersonModal.classList.remove('show');
+                personNameInput.value = '';
+            }
+        };
+
+        personNameInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addPersonConfirm.click();
+            }
+        });
+    }
+
+    showAddPersonModal() {
+        const addPersonModal = document.getElementById('addPersonModal');
+        const personNameInput = document.getElementById('personNameInput');
+        addPersonModal.classList.add('show');
+        setTimeout(() => personNameInput.focus(), 100);
+    }
+
     loadData() {
         const savedData = localStorage.getItem('debtManager');
         if (savedData) {
@@ -49,17 +255,33 @@ class DebtManager {
     }
 
     getDefaultData() {
-        return {
-            'John': [
-                { description: 'Restaurant lunch', value: 25.50, hidden: false },
-                { description: 'Coffee shop', value: 8.00, hidden: false }
-            ],
-            'Mary': [
-                { description: 'Movie tickets', value: 15.00, hidden: false },
-                { description: 'Snacks', value: 12.50, hidden: false },
-                { description: 'Bus fare', value: 4.50, hidden: true }
-            ]
-        };
+        const isPortuguese = this.currentLanguage === 'pt-BR';
+        
+        if (isPortuguese) {
+            return {
+                'João': [
+                    { description: 'Almoço no restaurante', value: 25.50, hidden: false },
+                    { description: 'Cafeteria', value: 8.00, hidden: false }
+                ],
+                'Maria': [
+                    { description: 'Ingressos do cinema', value: 15.00, hidden: false },
+                    { description: 'Lanches', value: 12.50, hidden: false },
+                    { description: 'Passagem de ônibus', value: 4.50, hidden: true }
+                ]
+            };
+        } else {
+            return {
+                'John': [
+                    { description: 'Restaurant lunch', value: 25.50, hidden: false },
+                    { description: 'Coffee shop', value: 8.00, hidden: false }
+                ],
+                'Mary': [
+                    { description: 'Movie tickets', value: 15.00, hidden: false },
+                    { description: 'Snacks', value: 12.50, hidden: false },
+                    { description: 'Bus fare', value: 4.50, hidden: true }
+                ]
+            };
+        }
     }
 
     saveData() {
@@ -82,8 +304,11 @@ class DebtManager {
         const modalConfirmBtn = document.getElementById('modalConfirm');
         const modalCancelBtn = document.getElementById('modalCancel');
 
-        modalTitle.textContent = title;
-        modalMessage.textContent = message;
+        modalTitle.textContent = title || this.translate('confirm_action');
+        modalMessage.textContent = message || this.translate('default_action_confirm');
+        
+        modalConfirmBtn.textContent = this.translate('confirm');
+        modalCancelBtn.textContent = this.translate('cancel');
         
         modal.classList.add('show');
         
@@ -92,6 +317,9 @@ class DebtManager {
         
         const newConfirmBtn = document.getElementById('modalConfirm');
         const newCancelBtn = document.getElementById('modalCancel');
+        
+        newConfirmBtn.textContent = this.translate('confirm');
+        newCancelBtn.textContent = this.translate('cancel');
         
         newConfirmBtn.onclick = () => {
             modal.classList.remove('show');
@@ -110,9 +338,12 @@ class DebtManager {
     }
 
     formatCurrency(value) {
-        return new Intl.NumberFormat('en-US', {
+        const locale = this.currentLanguage === 'pt-BR' ? 'pt-BR' : 'en-US';
+        const currency = this.currentLanguage === 'pt-BR' ? 'BRL' : 'USD';
+        
+        return new Intl.NumberFormat(locale, {
             style: 'currency',
-            currency: 'USD'
+            currency: currency
         }).format(value);
     }
 
@@ -165,8 +396,8 @@ class DebtManager {
             personSection.innerHTML = `
                 <div class="person-header">
                     <div class="person-name">
-                        <span class="drag-handle" title="Drag to reorder">⋮⋮</span>
-                        I owe to: ${person}
+                        <span class="drag-handle" title="${this.translate('drag_drop')}">⋮⋮</span>
+                        ${this.translate('i_owe_to')} ${person}
                     </div>
                     <div class="person-controls">
                         <div class="person-total">
@@ -180,10 +411,10 @@ class DebtManager {
                     <thead>
                         <tr>
                             <th></th>
-                            <th>Description</th>
-                            <th>Amount</th>
-                            <th>Hidden</th>
-                            <th>Actions</th>
+                            <th>${this.translate('description')}</th>
+                            <th>${this.translate('amount')}</th>
+                            <th>${this.translate('hidden')}</th>
+                            <th>${this.translate('actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -193,7 +424,7 @@ class DebtManager {
                                 data-person="${person}" 
                                 data-index="${index}">
                                 <td>
-                                    <span class="drag-handle" title="Drag to reorder">⋮⋮</span>
+                                    <span class="drag-handle" title="${this.translate('drag_drop')}">⋮⋮</span>
                                 </td>
                                 <td>${debt.description}</td>
                                 <td class="value">${this.formatCurrency(debt.value)}</td>
@@ -204,20 +435,20 @@ class DebtManager {
                                                ${debt.hidden ? 'checked' : ''}
                                                onchange="debtManager.toggleDebtVisibility('${person}', ${index})">
                                         <label for="hidden-${person}-${index}" class="hidden-label">
-                                            ${debt.hidden ? 'Hidden' : 'Visible'}
+                                            ${debt.hidden ? this.translate('hidden') : this.translate('visible')}
                                         </label>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="actions-cell">
-                                        <button class="btn btn-edit" onclick="debtManager.editDebt('${person}', ${index})" title="Edit this debt">
-                                            ✏️ Edit
+                                        <button class="btn btn-edit" onclick="debtManager.editDebt('${person}', ${index})" title="${this.translate('edit')}">
+                                            ${this.translate('edit')}
                                         </button>
-                                        <button class="btn btn-repeat" onclick="debtManager.repeatDebt('${person}', ${index})" title="Duplicate this debt">
-                                            🔄 Duplicate
+                                        <button class="btn btn-repeat" onclick="debtManager.repeatDebt('${person}', ${index})" title="${this.translate('duplicate')}">
+                                            ${this.translate('duplicate')}
                                         </button>
-                                        <button class="btn btn-remove" onclick="debtManager.removeDebt('${person}', ${index})" title="Remove this debt">
-                                            🗑️ Remove
+                                        <button class="btn btn-remove" onclick="debtManager.removeDebt('${person}', ${index})" title="${this.translate('remove')}">
+                                            ${this.translate('remove')}
                                         </button>
                                     </div>
                                 </td>
@@ -227,10 +458,10 @@ class DebtManager {
                 </table>
                 
                 <div class="add-debt">
-                    <input type="text" id="desc-${person}" placeholder="Debt description" />
-                    <input type="number" id="value-${person}" placeholder="Amount ($)" step="0.01" min="0" />
-                    <button onclick="debtManager.addDebt('${person}')">Add Debt</button>
-                    <button class="remove-person-btn" onclick="debtManager.removePerson('${person}')">Remove ${person}</button>
+                    <input type="text" id="desc-${person}" placeholder="${this.translate('debt_description_placeholder')}" />
+                    <input type="number" id="value-${person}" placeholder="${this.translate('amount_placeholder')}" step="0.01" min="0" />
+                    <button onclick="debtManager.addDebt('${person}')">${this.translate('add_debt')}</button>
+                    <button class="remove-person-btn" onclick="debtManager.removePerson('${person}')">${this.translate('remove_person')} ${person}</button>
                 </div>
             `;
             
@@ -363,15 +594,18 @@ class DebtManager {
             this.saveData();
             this.renderDebts();
         } else {
-            alert('Please fill in the description and a valid amount.');
+            alert(this.translate('fill_fields_error'));
         }
     }
 
     removeDebt(person, index) {
         const debt = this.debts[person][index];
         this.showConfirmModal(
-            '🗑️ Remove Debt',
-            `Are you sure you want to remove the debt "${debt.description}" valued at ${this.formatCurrency(debt.value)}?`,
+            this.translate('remove_debt_confirm'),
+            this.translate('remove_debt_message', {
+                description: debt.description,
+                amount: this.formatCurrency(debt.value)
+            }),
             () => {
                 this.debts[person].splice(index, 1);
                 this.saveData();
@@ -396,21 +630,22 @@ class DebtManager {
     editDebt(person, index) {
         const currentDebt = this.debts[person][index];
         
-        const newDescription = prompt('Edit debt description:', currentDebt.description);
+        const newDescription = prompt(this.translate('edit_debt_description'), currentDebt.description);
         if (newDescription === null) return;
         
-        const newValueStr = prompt('Edit debt amount ($):', currentDebt.value.toFixed(2));
+        const currency = this.currentLanguage === 'pt-BR' ? 'R$' : '$';
+        const newValueStr = prompt(this.translate('edit_debt_amount').replace('($)', `(${currency})`), currentDebt.value.toFixed(2));
         if (newValueStr === null) return;
         
         const newValue = parseFloat(newValueStr.replace(',', '.'));
         
         if (newDescription.trim() === '') {
-            alert('Description cannot be empty.');
+            alert(this.translate('description_empty_error'));
             return;
         }
         
         if (isNaN(newValue) || newValue <= 0) {
-            alert('Please enter a valid amount greater than zero.');
+            alert(this.translate('invalid_amount_error'));
             return;
         }
         
@@ -435,8 +670,12 @@ class DebtManager {
         const totalValue = this.calculatePersonTotal(this.debts[person], true);
         
         this.showConfirmModal(
-            '🗑️ Remove Person',
-            `Are you sure you want to remove ${person} and all ${totalDebts} debts (total: ${this.formatCurrency(totalValue)})?`,
+            this.translate('remove_person_confirm'),
+            this.translate('remove_person_message', {
+                person: person,
+                count: totalDebts,
+                total: this.formatCurrency(totalValue)
+            }),
             () => {
                 delete this.debts[person];
                 this.saveData();
@@ -446,13 +685,13 @@ class DebtManager {
     }
 
     addNewPerson() {
-        const personName = prompt('Name of the new person:');
+        const personName = prompt(this.translate('new_person_name'));
         if (personName && personName.trim() && !this.debts[personName.trim()]) {
             this.debts[personName.trim()] = [];
             this.saveData();
             this.renderDebts();
         } else if (this.debts[personName.trim()]) {
-            alert('This person already exists!');
+            alert(this.translate('person_exists_error'));
         }
     }
 
@@ -461,8 +700,11 @@ class DebtManager {
         const totalValue = this.calculateTotalDebt() + this.calculateHiddenDebt();
         
         this.showConfirmModal(
-            '🗑️ Clear All Debts',
-            `Are you sure you want to clear ALL debts from ${totalPeople} people (total: ${this.formatCurrency(totalValue)})? This action cannot be undone.`,
+            this.translate('clear_all_confirm'),
+            this.translate('clear_all_message', {
+                count: totalPeople,
+                total: this.formatCurrency(totalValue)
+            }),
             () => {
                 this.debts = {};
                 this.saveData();
@@ -475,7 +717,7 @@ class DebtManager {
 const debtManager = new DebtManager();
 
 function addNewPerson() {
-    debtManager.addNewPerson();
+    debtManager.showAddPersonModal();
 }
 
 function clearAllDebts() {
