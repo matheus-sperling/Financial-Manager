@@ -47,9 +47,17 @@ class DebtManager {
         this.saveTheme(newTheme);
     }
 
-    // Load language preference from localStorage or default to English
+    // Load language preference from localStorage or detect from browser locale
     loadLanguage() {
-        return localStorage.getItem('language') || 'en';
+        const savedLanguage = localStorage.getItem('language');
+        if (savedLanguage) {
+            return savedLanguage;
+        }
+        
+        // Auto-detect language from browser locale
+        const browserLanguage = navigator.language || navigator.userLanguage;
+        const isPortuguese = browserLanguage.toLowerCase().startsWith('pt');
+        return isPortuguese ? 'pt-BR' : 'en';
     }
 
     // Save current language preference to localStorage
@@ -396,7 +404,7 @@ class DebtManager {
         peopleKeys.forEach((person, personIndex) => {
             const personSection = document.createElement('div');
             personSection.className = 'person-section';
-            personSection.draggable = true;
+            personSection.draggable = false;
             personSection.dataset.person = person;
             personSection.dataset.index = personIndex;
             
@@ -486,10 +494,30 @@ class DebtManager {
     setupDragAndDrop() {
         const personSections = document.querySelectorAll('.person-section');
         personSections.forEach(section => {
-            section.addEventListener('dragstart', (e) => this.handlePersonDragStart(e));
+            // Only allow dragging when starting from the drag handle
+            const dragHandle = section.querySelector('.person-name .drag-handle');
+            if (dragHandle) {
+                dragHandle.addEventListener('mousedown', () => {
+                    section.draggable = true;
+                });
+                
+                section.addEventListener('dragstart', (e) => {
+                    // Only allow drag if it started from the drag handle
+                    if (!e.target.closest('.drag-handle')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    this.handlePersonDragStart(e);
+                });
+                
+                section.addEventListener('dragend', (e) => {
+                    section.draggable = false;
+                    this.handlePersonDragEnd(e);
+                });
+            }
+            
             section.addEventListener('dragover', (e) => this.handlePersonDragOver(e));
             section.addEventListener('drop', (e) => this.handlePersonDrop(e));
-            section.addEventListener('dragend', (e) => this.handlePersonDragEnd(e));
         });
 
         const debtRows = document.querySelectorAll('.debt-table tr[draggable]');
