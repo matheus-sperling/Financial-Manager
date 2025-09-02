@@ -13,7 +13,7 @@
     --text-secondary: #334155;
     --text-muted: #64748b;
     --text-light: #94a3b8;
-    --accent-color: #ef4444;
+    --accent-color: #059669;
     --primary-blue: #3b82f6;
     --primary-green: #10b981;
     --primary-orange: #f59e0b;
@@ -28,7 +28,7 @@
     --section-bg: #f8fafc;
     --success-color: #059669;
     --warning-color: #d97706;
-    --error-color: #dc2626;
+    --error-color: #047857;
 }
 
 /* Dark Theme Color Palette - Override light theme variables */
@@ -46,7 +46,7 @@
     --text-secondary: #e2e8f0;
     --text-muted: #cbd5e1;
     --text-light: #94a3b8;
-    --accent-color: #ef4444;
+    --accent-color: #059669;
     --primary-blue: #3b82f6;
     --primary-green: #10b981;
     --primary-orange: #f59e0b;
@@ -61,7 +61,7 @@
     --section-bg: #334155;
     --success-color: #059669;
     --warning-color: #d97706;
-    --error-color: #dc2626;
+    --error-color: #047857;
 }
 
 /* Universal styles and smooth transitions */
@@ -177,7 +177,7 @@ body {
 .total-amount {
     font-size: 2rem;
     font-weight: bold;
-    color: var(--accent-color);
+    color: var(--primary-green);
 }
 
 /* Main content area padding */
@@ -226,10 +226,24 @@ body {
     gap: 10px;
 }
 
+/* Editable person name styling */
+.editable-name {
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 2px 5px;
+    transition: all 0.3s ease;
+}
+
+.editable-name:hover {
+    background: var(--primary-green);
+    color: white;
+    transform: scale(1.02);
+}
+
 .person-total {
     font-size: 1.3rem;
     font-weight: bold;
-    color: var(--accent-color);
+    color: var(--primary-green);
     background: var(--card-bg);
     padding: 8px 15px;
     border-radius: 25px;
@@ -323,7 +337,7 @@ body {
 
 .value {
     font-weight: bold;
-    color: var(--accent-color);
+    color: var(--primary-green);
 }
 
 .checkbox-wrapper {
@@ -356,7 +370,7 @@ body {
 }
 
 .btn-remove {
-    background: var(--error-color);
+    background: #dc2626;
     color: white;
     border: 1px solid transparent;
 }
@@ -439,7 +453,7 @@ body {
 }
 
 .remove-person-btn {
-    background: var(--error-color);
+    background: #dc2626;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -516,7 +530,7 @@ body {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: #27ae60;
+    background: #16a34a;
     color: white;
     padding: 8px 15px;
     border-radius: 20px;
@@ -569,7 +583,7 @@ body {
 
 .modal-title {
     font-size: 1.5rem;
-    color: var(--accent-color);
+    color: var(--primary-green);
     margin-bottom: 15px;
     font-weight: bold;
 }
@@ -599,12 +613,12 @@ body {
 }
 
 .modal-btn-confirm {
-    background: #e74c3c;
+    background: #dc2626;
     color: white;
 }
 
 .modal-btn-confirm:hover {
-    background: #c0392b;
+    background: #b91c1c;
     transform: translateY(-2px);
 }
 

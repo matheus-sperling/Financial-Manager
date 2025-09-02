@@ -104,7 +104,9 @@ class DebtManager {
                 remove_person: 'Remover',
                 edit_debt_description: 'Editar descrição da dívida:',
                 edit_debt_amount: 'Editar valor da dívida (R$):',
+                edit_person_name: 'Editar nome da pessoa:',
                 description_empty_error: 'A descrição não pode estar vazia.',
+                person_name_empty_error: 'O nome da pessoa não pode estar vazio.',
                 invalid_amount_error: 'Por favor, insira um valor válido maior que zero.',
                 fill_fields_error: 'Por favor, preencha a descrição e um valor válido.',
                 person_exists_error: 'Esta pessoa já existe!',
@@ -153,7 +155,9 @@ class DebtManager {
                 remove_person: 'Remove',
                 edit_debt_description: 'Edit debt description:',
                 edit_debt_amount: 'Edit debt amount ($):',
+                edit_person_name: 'Edit person name:',
                 description_empty_error: 'Description cannot be empty.',
+                person_name_empty_error: 'Person name cannot be empty.',
                 invalid_amount_error: 'Please enter a valid amount greater than zero.',
                 fill_fields_error: 'Please fill in the description and a valid amount.',
                 person_exists_error: 'This person already exists!',
@@ -498,7 +502,9 @@ class DebtManager {
                 <div class="person-header">
                     <div class="person-name">
                         <span class="drag-handle" title="${this.translate('drag_drop')}">⋮⋮</span>
-                        ${this.translate('i_owe_to')} ${person}
+                        <span onclick="debtManager.editPersonName('${person}')" class="editable-name" title="Clique para editar">
+                            ${this.translate('i_owe_to')} ${person}
+                        </span>
                     </div>
                     <div class="person-controls">
                         <div class="person-total">
@@ -829,6 +835,33 @@ class DebtManager {
         } else if (this.debts[personName.trim()]) {
             alert(this.translate('person_exists_error'));
         }
+    }
+
+    // Edit person name with validation and update all references
+    editPersonName(oldName) {
+        const newName = prompt(this.translate('edit_person_name'), oldName);
+        if (newName === null) return;
+        
+        const trimmedName = newName.trim();
+        if (trimmedName === '') {
+            alert(this.translate('person_name_empty_error'));
+            return;
+        }
+        
+        if (trimmedName === oldName) return;
+        
+        if (this.debts[trimmedName]) {
+            alert(this.translate('person_exists_error'));
+            return;
+        }
+        
+        // Update the debts object with new name
+        const debts = this.debts[oldName];
+        delete this.debts[oldName];
+        this.debts[trimmedName] = debts;
+        
+        this.saveData();
+        this.renderDebts();
     }
 
     // Clear all debts from all people after confirmation
