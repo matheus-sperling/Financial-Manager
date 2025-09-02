@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Simple and intuitive web application to manage your personal debts with other people">
+    <meta name="keywords" content="debt manager, personal finance, money management, debt tracker">
+    <meta name="author" content="Your Name">
+    <title>Debt Manager</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>💰 Debt Manager</h1>
+                    <p>Track your debts with other people</p>
+                </div>
+                <button class="theme-toggle" onclick="debtManager.toggleTheme()" title="Toggle dark/light mode">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="summary">
+            <div class="summary-card">
+                <h3>Total to Pay</h3>
+                <div class="total-amount" id="totalDebt">$0.00</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total People</h3>
+                <div class="total-amount" id="totalPeople">0</div>
+            </div>
+            <div class="summary-card">
+                <h3>Hidden Debts</h3>
+                <div class="total-amount" id="hiddenDebt">$0.00</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="legend">
+                <strong>How to use:</strong> Add people and their respective debts. Use "Edit" to modify description and amount. 
+                Use "Duplicate" to easily duplicate a debt. 
+                Check "Hidden" to exclude from total calculation (useful for paid debts or disputes).
+                <br><strong>Drag and drop:</strong> Use the ⋮⋮ icon to drag people, or drag any table row to reorder debts.
+            </div>
+            
+            <div id="debtsList">
+                <!-- Debts will be inserted here -->
+            </div>
+            
+            <div class="actions">
+                <button class="add-person" onclick="addNewPerson()">➕ Add New Person</button>
+                <button class="clear-all" onclick="clearAllDebts()">🗑️ Clear All Debts</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="save-indicator" id="saveIndicator">
+        💾 Data saved automatically
+    </div>
+    
+    <!-- Confirmation modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">⚠️ Confirm Action</div>
+            <div class="modal-message" id="modalMessage">
+                Are you sure you want to perform this action?
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" id="modalConfirm">
+                    🗑️ Confirm
+                </button>
+                <button class="modal-btn modal-btn-cancel" id="modalCancel">
+                    ❌ Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

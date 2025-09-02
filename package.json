@@ -1,0 +1,35 @@
+{
+  "name": "gerenciador-dividas",
+  "version": "1.0.0",
+  "description": "Uma aplicação web simples e intuitiva para controlar suas dívidas pessoais com outras pessoas",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx live-server .",
+    "lint": "echo 'No linting configured'",
+    "test": "echo 'No tests configured'"
+  },
+  "keywords": [
+    "debt",
+    "finance",
+    "personal-finance",
+    "money-management",
+    "vanilla-js",
+    "html",
+    "css",
+    "javascript",
+    "local-storage"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/gerenciador-dividas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/gerenciador-dividas/issues"
+  },
+  "homepage": "https://github.com/yourusername/gerenciador-dividas#readme",
+  "devDependencies": {},
+  "dependencies": {}
+}
