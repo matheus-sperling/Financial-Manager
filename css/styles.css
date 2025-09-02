@@ -1,55 +1,65 @@
 :root {
-    /* Light theme colors - Suavizadas */
-    --bg-gradient-start: #a8b5e8;
-    --bg-gradient-end: #9bb5d1;
-    --container-bg: #fefefe;
-    --header-gradient-start: #ff9999;
-    --header-gradient-end: #ffb399;
+    /* Light theme colors - Paleta Moderna e Harmoniosa */
+    --bg-gradient-start: #667eea;
+    --bg-gradient-end: #764ba2;
+    --container-bg: #ffffff;
+    --header-gradient-start: #6366f1;
+    --header-gradient-end: #8b5cf6;
     --header-text: white;
-    --summary-bg: #f9fafb;
-    --card-bg: #fdfdfd;
-    --text-primary: #4a5568;
-    --text-secondary: #4a6fa5;
-    --text-muted: #718096;
-    --text-light: #a0aec0;
-    --accent-color: #e57373;
-    --primary-blue: #64b5f6;
-    --primary-green: #66bb6a;
-    --primary-orange: #ffb74d;
+    --summary-bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --text-light: #94a3b8;
+    --accent-color: #ef4444;
+    --primary-blue: #3b82f6;
+    --primary-green: #10b981;
+    --primary-orange: #f59e0b;
+    --primary-purple: #8b5cf6;
+    --primary-indigo: #6366f1;
     --border-color: #e2e8f0;
-    --shadow-color: rgba(0,0,0,0.08);
-    --shadow-strong: rgba(0,0,0,0.2);
-    --table-header: #5a7da8;
-    --table-hover: #f7fafc;
-    --modal-overlay: rgba(0, 0, 0, 0.4);
-    --section-bg: #f7fafc;
+    --shadow-color: rgba(0,0,0,0.1);
+    --shadow-strong: rgba(0,0,0,0.25);
+    --table-header: #475569;
+    --table-hover: #f1f5f9;
+    --modal-overlay: rgba(0, 0, 0, 0.5);
+    --section-bg: #f8fafc;
+    --success-color: #059669;
+    --warning-color: #d97706;
+    --error-color: #dc2626;
 }
 
 [data-theme="dark"] {
-    /* Dark theme colors - Suavizadas */
-    --bg-gradient-start: #3a4f66;
-    --bg-gradient-end: #4a5d75;
-    --container-bg: #3a4f66;
-    --header-gradient-start: #e57373;
-    --header-gradient-end: #d86d6d;
+    /* Dark theme colors - Paleta Moderna Escura */
+    --bg-gradient-start: #0f172a;
+    --bg-gradient-end: #1e293b;
+    --container-bg: #1e293b;
+    --header-gradient-start: #4f46e5;
+    --header-gradient-end: #7c3aed;
     --header-text: white;
-    --summary-bg: #4a5d75;
-    --card-bg: #4f6380;
-    --text-primary: #e8eaf6;
-    --text-secondary: #e8eaf6;
-    --text-muted: #cbd5e0;
-    --text-light: #a0aec0;
-    --accent-color: #e57373;
-    --primary-blue: #64b5f6;
-    --primary-green: #66bb6a;
-    --primary-orange: #ffb74d;
-    --border-color: #5a708a;
-    --shadow-color: rgba(0,0,0,0.25);
-    --shadow-strong: rgba(0,0,0,0.4);
-    --table-header: #3a4f66;
-    --table-hover: #5a708a;
-    --modal-overlay: rgba(0, 0, 0, 0.6);
-    --section-bg: #4a5d75;
+    --summary-bg: #334155;
+    --card-bg: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #e2e8f0;
+    --text-muted: #cbd5e1;
+    --text-light: #94a3b8;
+    --accent-color: #ef4444;
+    --primary-blue: #3b82f6;
+    --primary-green: #10b981;
+    --primary-orange: #f59e0b;
+    --primary-purple: #8b5cf6;
+    --primary-indigo: #6366f1;
+    --border-color: #475569;
+    --shadow-color: rgba(0,0,0,0.3);
+    --shadow-strong: rgba(0,0,0,0.5);
+    --table-header: #1e293b;
+    --table-hover: #475569;
+    --modal-overlay: rgba(0, 0, 0, 0.7);
+    --section-bg: #334155;
+    --success-color: #059669;
+    --warning-color: #d97706;
+    --error-color: #dc2626;
 }
 
 * {
@@ -323,39 +333,51 @@ body {
 }
 
 .btn-remove {
-    background: #ef9a9a;
+    background: var(--error-color);
     color: white;
+    border: 1px solid transparent;
 }
 
 .btn-remove:hover {
-    background: #e57373;
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
 .btn-repeat {
-    background: #ffcc80;
+    background: var(--warning-color);
     color: white;
+    border: 1px solid transparent;
 }
 
 .btn-repeat:hover {
-    background: #ffb74d;
+    background: #b45309;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
 }
 
 .btn-toggle {
-    background: #b0bec5;
+    background: var(--text-muted);
     color: white;
+    border: 1px solid transparent;
 }
 
 .btn-toggle:hover {
-    background: #90a4ae;
+    background: var(--text-secondary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
 }
 
 .btn-edit {
-    background: #81c784;
+    background: var(--primary-blue);
     color: white;
+    border: 1px solid transparent;
 }
 
 .btn-edit:hover {
-    background: #66bb6a;
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .add-debt {
@@ -378,31 +400,36 @@ body {
 
 .add-debt button {
     padding: 10px 20px;
-    background: var(--primary-green);
+    background: var(--success-color);
     color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
 }
 
 .add-debt button:hover {
-    background: #229954;
+    background: #047857;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .remove-person-btn {
-    background: #e74c3c;
+    background: var(--error-color);
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
+    transition: all 0.3s ease;
 }
 
 .remove-person-btn:hover {
-    background: #c0392b;
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
 .actions {
@@ -413,7 +440,7 @@ body {
 }
 
 .clear-all {
-    background: #ffb74d;
+    background: var(--warning-color);
     color: white;
     border: none;
     padding: 12px 25px;
@@ -422,14 +449,17 @@ body {
     font-size: 16px;
     font-weight: bold;
     margin-right: 15px;
+    transition: all 0.3s ease;
 }
 
 .clear-all:hover {
-    background: #ffa726;
+    background: #b45309;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
 }
 
 .add-person {
-    background: #64b5f6;
+    background: var(--primary-indigo);
     color: white;
     border: none;
     padding: 12px 25px;
@@ -437,10 +467,13 @@ body {
     cursor: pointer;
     font-size: 16px;
     font-weight: bold;
+    transition: all 0.3s ease;
 }
 
 .add-person:hover {
-    background: #42a5f5;
+    background: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
 .legend {

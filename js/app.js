@@ -41,7 +41,7 @@ class DebtManager {
     }
 
     loadLanguage() {
-        return localStorage.getItem('language') || 'pt-BR';
+        return localStorage.getItem('language') || 'en';
     }
 
     saveLanguage(language) {
@@ -255,33 +255,17 @@ class DebtManager {
     }
 
     getDefaultData() {
-        const isPortuguese = this.currentLanguage === 'pt-BR';
-        
-        if (isPortuguese) {
-            return {
-                'João': [
-                    { description: 'Almoço no restaurante', value: 25.50, hidden: false },
-                    { description: 'Cafeteria', value: 8.00, hidden: false }
-                ],
-                'Maria': [
-                    { description: 'Ingressos do cinema', value: 15.00, hidden: false },
-                    { description: 'Lanches', value: 12.50, hidden: false },
-                    { description: 'Passagem de ônibus', value: 4.50, hidden: true }
-                ]
-            };
-        } else {
-            return {
-                'John': [
-                    { description: 'Restaurant lunch', value: 25.50, hidden: false },
-                    { description: 'Coffee shop', value: 8.00, hidden: false }
-                ],
-                'Mary': [
-                    { description: 'Movie tickets', value: 15.00, hidden: false },
-                    { description: 'Snacks', value: 12.50, hidden: false },
-                    { description: 'Bus fare', value: 4.50, hidden: true }
-                ]
-            };
-        }
+        return {
+            'John': [
+                { description: 'Restaurant lunch', value: 25.50, hidden: false },
+                { description: 'Coffee shop', value: 8.00, hidden: false }
+            ],
+            'Mary': [
+                { description: 'Movie tickets', value: 15.00, hidden: false },
+                { description: 'Snacks', value: 12.50, hidden: false },
+                { description: 'Bus fare', value: 4.50, hidden: true }
+            ]
+        };
     }
 
     saveData() {
