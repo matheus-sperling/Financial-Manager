@@ -459,7 +459,7 @@ class DebtManager {
                 
                 <div class="add-debt">
                     <input type="text" id="desc-${person}" placeholder="${this.translate('debt_description_placeholder')}" />
-                    <input type="number" id="value-${person}" placeholder="${this.translate('amount_placeholder')}" step="0.01" min="0" />
+                    <input type="number" id="value-${person}" placeholder="${this.translate('amount_placeholder')}" min="0" />
                     <button onclick="debtManager.addDebt('${person}')">${this.translate('add_debt')}</button>
                     <button class="remove-person-btn" onclick="debtManager.removePerson('${person}')">${this.translate('remove_person')} ${person}</button>
                 </div>
