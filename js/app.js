@@ -215,6 +215,13 @@ class DebtManager {
         const newLanguage = this.currentLanguage === 'pt-BR' ? 'en' : 'pt-BR';
         this.applyLanguage(newLanguage);
         this.saveLanguage(newLanguage);
+        
+        // Translate existing default examples if present
+        const wasTranslated = this.translateExistingData();
+        if (wasTranslated) {
+            this.saveData();
+        }
+        
         this.renderDebts();
     }
 
@@ -278,19 +285,95 @@ class DebtManager {
         return this.getDefaultData();
     }
 
-    // Return sample default data for demonstration purposes
+    // Return sample default data for demonstration purposes based on current language
     getDefaultData() {
-        return {
-            'John': [
-                { description: 'Restaurant lunch', value: 25.50, hidden: false },
-                { description: 'Coffee shop', value: 8.00, hidden: false }
-            ],
-            'Mary': [
-                { description: 'Movie tickets', value: 15.00, hidden: false },
-                { description: 'Snacks', value: 12.50, hidden: false },
-                { description: 'Bus fare', value: 4.50, hidden: true }
-            ]
+        if (this.currentLanguage === 'pt-BR') {
+            return {
+                'João': [
+                    { description: 'Almoço no restaurante', value: 25.50, hidden: false },
+                    { description: 'Lanchonete', value: 8.00, hidden: false }
+                ],
+                'Maria': [
+                    { description: 'Ingressos do cinema', value: 15.00, hidden: false },
+                    { description: 'Lanches', value: 12.50, hidden: false },
+                    { description: 'Passagem de ônibus', value: 4.50, hidden: true }
+                ]
+            };
+        } else {
+            return {
+                'John': [
+                    { description: 'Restaurant lunch', value: 25.50, hidden: false },
+                    { description: 'Coffee shop', value: 8.00, hidden: false }
+                ],
+                'Mary': [
+                    { description: 'Movie tickets', value: 15.00, hidden: false },
+                    { description: 'Snacks', value: 12.50, hidden: false },
+                    { description: 'Bus fare', value: 4.50, hidden: true }
+                ]
+            };
+        }
+    }
+
+    // Translate existing default data when language changes
+    translateExistingData() {
+        // Define translation mappings for default data
+        const translations = {
+            // English to Portuguese
+            'en-to-pt': {
+                names: { 'John': 'João', 'Mary': 'Maria' },
+                descriptions: {
+                    'Restaurant lunch': 'Almoço no restaurante',
+                    'Coffee shop': 'Lanchonete',
+                    'Movie tickets': 'Ingressos do cinema',
+                    'Snacks': 'Lanches',
+                    'Bus fare': 'Passagem de ônibus'
+                }
+            },
+            // Portuguese to English
+            'pt-to-en': {
+                names: { 'João': 'John', 'Maria': 'Mary' },
+                descriptions: {
+                    'Almoço no restaurante': 'Restaurant lunch',
+                    'Lanchonete': 'Coffee shop',
+                    'Ingressos do cinema': 'Movie tickets',
+                    'Lanches': 'Snacks',
+                    'Passagem de ônibus': 'Bus fare'
+                }
+            }
         };
+
+        const translationKey = this.currentLanguage === 'pt-BR' ? 'en-to-pt' : 'pt-to-en';
+        const nameMap = translations[translationKey].names;
+        const descMap = translations[translationKey].descriptions;
+        
+        // Check if current data contains default examples to translate
+        const newDebts = {};
+        let hasChanges = false;
+        
+        Object.keys(this.debts).forEach(person => {
+            const newPersonName = nameMap[person] || person;
+            if (newPersonName !== person) {
+                hasChanges = true;
+            }
+            
+            const translatedDebts = this.debts[person].map(debt => {
+                const newDescription = descMap[debt.description] || debt.description;
+                return {
+                    ...debt,
+                    description: newDescription
+                };
+            });
+            
+            newDebts[newPersonName] = translatedDebts;
+        });
+        
+        // Only update if we found translations
+        if (hasChanges) {
+            this.debts = newDebts;
+            return true;
+        }
+        
+        return false;
     }
 
     // Save current debt data to localStorage and show save indicator
@@ -494,30 +577,76 @@ class DebtManager {
     setupDragAndDrop() {
         const personSections = document.querySelectorAll('.person-section');
         personSections.forEach(section => {
-            // Only allow dragging when starting from the drag handle
             const dragHandle = section.querySelector('.person-name .drag-handle');
             if (dragHandle) {
-                dragHandle.addEventListener('mousedown', () => {
-                    section.draggable = true;
+                // Make drag handle always draggable and visually indicate it
+                dragHandle.style.cursor = 'grab';
+                dragHandle.style.userSelect = 'none';
+                dragHandle.draggable = true;
+                
+                // Handle drag events on the drag handle itself
+                dragHandle.addEventListener('dragstart', (e) => {
+                    e.stopPropagation();
+                    dragHandle.style.cursor = 'grabbing';
+                    // Set the person section as the dragged element
+                    this.draggedPersonElement = section;
+                    section.classList.add('dragging');
+                    // Store drag data
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/html', section.outerHTML);
                 });
                 
-                section.addEventListener('dragstart', (e) => {
-                    // Only allow drag if it started from the drag handle
-                    if (!e.target.closest('.drag-handle')) {
-                        e.preventDefault();
-                        return false;
-                    }
-                    this.handlePersonDragStart(e);
-                });
-                
-                section.addEventListener('dragend', (e) => {
-                    section.draggable = false;
-                    this.handlePersonDragEnd(e);
+                dragHandle.addEventListener('dragend', (e) => {
+                    e.stopPropagation();
+                    dragHandle.style.cursor = 'grab';
+                    section.classList.remove('dragging');
+                    document.querySelectorAll('.person-section').forEach(s => {
+                        s.classList.remove('drag-over');
+                    });
+                    this.draggedPersonElement = null;
                 });
             }
             
-            section.addEventListener('dragover', (e) => this.handlePersonDragOver(e));
-            section.addEventListener('drop', (e) => this.handlePersonDrop(e));
+            // Handle drop events on person sections
+            section.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if (this.draggedPersonElement && this.draggedPersonElement !== section) {
+                    section.classList.add('drag-over');
+                }
+            });
+            
+            section.addEventListener('dragleave', (e) => {
+                // Only remove drag-over if we're actually leaving the section
+                if (!section.contains(e.relatedTarget)) {
+                    section.classList.remove('drag-over');
+                }
+            });
+            
+            section.addEventListener('drop', (e) => {
+                e.preventDefault();
+                section.classList.remove('drag-over');
+                
+                if (this.draggedPersonElement && this.draggedPersonElement !== section) {
+                    const fromIndex = parseInt(this.draggedPersonElement.dataset.index);
+                    const toIndex = parseInt(section.dataset.index);
+                    
+                    const peopleKeys = Object.keys(this.debts);
+                    const newDebts = {};
+                    const entries = Object.entries(this.debts);
+                    
+                    // Reorder the entries
+                    const [draggedEntry] = entries.splice(fromIndex, 1);
+                    entries.splice(toIndex, 0, draggedEntry);
+                    
+                    entries.forEach(([key, value]) => {
+                        newDebts[key] = value;
+                    });
+                    
+                    this.debts = newDebts;
+                    this.saveData();
+                    this.renderDebts();
+                }
+            });
         });
 
         const debtRows = document.querySelectorAll('.debt-table tr[draggable]');
@@ -529,53 +658,6 @@ class DebtManager {
         });
     }
 
-    // Handle drag start event for person sections
-    handlePersonDragStart(e) {
-        this.draggedPersonElement = e.currentTarget;
-        e.currentTarget.classList.add('dragging');
-    }
-
-    // Handle drag over event for person sections
-    handlePersonDragOver(e) {
-        e.preventDefault();
-        if (this.draggedPersonElement && e.currentTarget !== this.draggedPersonElement) {
-            e.currentTarget.classList.add('drag-over');
-        }
-    }
-
-    // Handle drop event to reorder person sections
-    handlePersonDrop(e) {
-        e.preventDefault();
-        if (this.draggedPersonElement && e.currentTarget !== this.draggedPersonElement) {
-            const fromIndex = parseInt(this.draggedPersonElement.dataset.index);
-            const toIndex = parseInt(e.currentTarget.dataset.index);
-            
-            const peopleKeys = Object.keys(this.debts);
-            const newDebts = {};
-            const entries = Object.entries(this.debts);
-            
-            const [draggedEntry] = entries.splice(fromIndex, 1);
-            entries.splice(toIndex, 0, draggedEntry);
-            
-            entries.forEach(([key, value]) => {
-                newDebts[key] = value;
-            });
-            
-            this.debts = newDebts;
-            this.saveData();
-            this.renderDebts();
-        }
-        e.currentTarget.classList.remove('drag-over');
-    }
-
-    // Clean up drag styling after person drag operation
-    handlePersonDragEnd(e) {
-        e.currentTarget.classList.remove('dragging');
-        document.querySelectorAll('.person-section').forEach(section => {
-            section.classList.remove('drag-over');
-        });
-        this.draggedPersonElement = null;
-    }
 
     // Handle drag start event for debt table rows
     handleDebtDragStart(e) {
