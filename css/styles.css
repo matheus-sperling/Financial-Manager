@@ -1,3 +1,4 @@
+/* CSS Custom Properties - Light Theme Color Palette */
 :root {
     /* Light theme colors - Paleta Moderna e Harmoniosa */
     --bg-gradient-start: #667eea;
@@ -30,6 +31,7 @@
     --error-color: #dc2626;
 }
 
+/* Dark Theme Color Palette - Override light theme variables */
 [data-theme="dark"] {
     /* Dark theme colors - Paleta Moderna Escura */
     --bg-gradient-start: #0f172a;
@@ -62,6 +64,7 @@
     --error-color: #dc2626;
 }
 
+/* Universal styles and smooth transitions */
 * {
     margin: 0;
     padding: 0;
@@ -69,6 +72,7 @@
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
+/* Main body styling with gradient background */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
@@ -76,6 +80,7 @@ body {
     padding: 20px;
 }
 
+/* Main application container with card-like appearance */
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -85,12 +90,14 @@ body {
     overflow: hidden;
 }
 
+/* Header section with gradient background */
 .header {
     background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
     color: var(--header-text);
     padding: 30px;
 }
 
+/* Header layout container */
 .header-content {
     display: flex;
     justify-content: space-between;
@@ -98,11 +105,13 @@ body {
     max-width: 100%;
 }
 
+/* Header text alignment */
 .header-text {
     text-align: left;
     flex: 1;
 }
 
+/* Theme toggle button styling with glassmorphism effect */
 .theme-toggle {
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.3);
@@ -117,25 +126,30 @@ body {
     backdrop-filter: blur(10px);
 }
 
+/* Theme toggle hover effects */
 .theme-toggle:hover {
     background: rgba(255, 255, 255, 0.3);
     transform: scale(1.1);
 }
 
+/* Theme icon styling and transitions */
 .theme-icon {
     font-size: 1.5rem;
     transition: transform 0.3s ease;
 }
 
+/* Theme icon rotation effect on hover */
 .theme-toggle:hover .theme-icon {
     transform: rotate(20deg);
 }
 
+/* Header title styling */
 .header h1 {
     font-size: 2.5rem;
     margin-bottom: 10px;
 }
 
+/* Summary cards container with responsive grid */
 .summary {
     background: var(--summary-bg);
     padding: 20px;
@@ -144,6 +158,7 @@ body {
     gap: 20px;
 }
 
+/* Individual summary card styling */
 .summary-card {
     background: var(--card-bg);
     padding: 20px;
@@ -152,21 +167,25 @@ body {
     text-align: center;
 }
 
+/* Summary card titles */
 .summary-card h3 {
     color: var(--text-primary);
     margin-bottom: 10px;
 }
 
+/* Large amount display styling */
 .total-amount {
     font-size: 2rem;
     font-weight: bold;
     color: var(--accent-color);
 }
 
+/* Main content area padding */
 .content {
     padding: 30px;
 }
 
+/* Individual person section container */
 .person-section {
     margin-bottom: 40px;
     background: var(--section-bg);
@@ -175,16 +194,19 @@ body {
     position: relative;
 }
 
+/* Dragging state for person sections */
 .person-section.dragging {
     opacity: 0.5;
     transform: rotate(2deg);
 }
 
+/* Drag over state for person sections */
 .person-section.drag-over {
     border: 3px dashed var(--primary-blue);
     background: var(--primary-blue)20;
 }
 
+/* Person header layout and styling */
 .person-header {
     display: flex;
     justify-content: space-between;
@@ -194,6 +216,7 @@ body {
     border-bottom: 3px solid var(--primary-blue);
 }
 
+/* Person name display with drag handle */
 .person-name {
     font-size: 1.5rem;
     font-weight: bold;
@@ -647,6 +670,7 @@ body {
     font-size: 1.3rem;
 }
 
+/* Responsive design for mobile devices */
 @media (max-width: 768px) {
     .person-header {
         flex-direction: column;
@@ -664,4 +688,67 @@ body {
     .actions-cell {
         flex-direction: column;
     }
+}
+
+/* Language stability - prevent layout shifts during language changes */
+.modal-btn,
+.btn,
+.add-debt button,
+.remove-person-btn,
+.add-person,
+.clear-all {
+    min-width: fit-content;
+    white-space: nowrap;
+}
+
+/* Ensure consistent button sizing across languages */
+.modal-btn {
+    min-width: 100px;
+}
+
+.btn {
+    min-width: auto;
+    padding: 5px 10px;
+}
+
+/* Prevent table column width changes during language toggle */
+.debt-table th:nth-child(2) {
+    min-width: 150px;
+}
+
+.debt-table th:nth-child(3) {
+    min-width: 100px;
+    text-align: center;
+}
+
+.debt-table th:nth-child(4) {
+    min-width: 80px;
+    text-align: center;
+}
+
+.debt-table th:nth-child(5) {
+    min-width: 200px;
+}
+
+/* Stable input field widths */
+.add-debt input {
+    flex: 1;
+    min-width: 150px;
+    box-sizing: border-box;
+}
+
+/* Prevent person name width changes */
+.person-name {
+    min-width: 200px;
+}
+
+/* Stable summary card widths */
+.summary-card {
+    min-width: 200px;
+    flex: 1;
+}
+
+/* Modal content stability */
+.modal-content {
+    min-width: 300px;
 }

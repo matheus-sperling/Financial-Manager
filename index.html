@@ -1,6 +1,8 @@
+<!-- Debt Manager Web Application - Main HTML Structure -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Document metadata and configuration -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Simple and intuitive web application to manage your personal debts with other people">
@@ -10,36 +12,48 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
+<!-- End of document head -->
 <body>
+    <!-- Main application container -->
+    <!-- Application wrapper container -->
     <div class="container">
+        <!-- Header section with title and theme toggle -->
         <div class="header">
             <div class="header-content">
+                <!-- Header text content -->
                 <div class="header-text">
                     <h1 data-i18n="title">💰 Debt Manager</h1>
                     <p data-i18n="subtitle">Track your debts with other people</p>
                 </div>
+                <!-- Theme toggle button (dark/light mode) -->
                 <button class="theme-toggle" onclick="debtManager.toggleTheme()" data-i18n-title="theme_toggle">
                     <span class="theme-icon">🌙</span>
                 </button>
             </div>
         </div>
         
+        <!-- Summary cards section showing debt statistics -->
         <div class="summary">
+            <!-- Total debt amount card -->
             <div class="summary-card">
                 <h3 data-i18n="total_to_pay">Total to Pay</h3>
                 <div class="total-amount" id="totalDebt">$0.00</div>
             </div>
+            <!-- Total people count card -->
             <div class="summary-card">
                 <h3 data-i18n="total_people">Total People</h3>
                 <div class="total-amount" id="totalPeople">0</div>
             </div>
+            <!-- Hidden debts total card -->
             <div class="summary-card">
                 <h3 data-i18n="hidden_debts">Hidden Debts</h3>
                 <div class="total-amount" id="hiddenDebt">$0.00</div>
             </div>
         </div>
         
+        <!-- Main content area -->
         <div class="content">
+            <!-- Instructions and help text -->
             <div class="legend">
                 <strong data-i18n="how_to_use">How to use:</strong> <span data-i18n="instructions">Add people and their respective debts. Use "Edit" to modify description and amount. 
                 Use "Duplicate" to easily duplicate a debt. 
@@ -47,10 +61,12 @@
                 <br><strong data-i18n="drag_drop">Drag and drop:</strong> <span data-i18n="drag_instructions">Use the ⋮⋮ icon to drag people, or drag any table row to reorder debts.</span>
             </div>
             
+            <!-- Dynamic debts list container -->
             <div id="debtsList">
                 <!-- Debts will be inserted here -->
             </div>
             
+            <!-- Main action buttons -->
             <div class="actions">
                 <button class="add-person" onclick="debtManager.showAddPersonModal()" data-i18n="add_new_person">➕ Add New Person</button>
                 <button class="clear-all" onclick="clearAllDebts()" data-i18n="clear_all_debts">🗑️ Clear All Debts</button>
@@ -58,11 +74,12 @@
         </div>
     </div>
     
+    <!-- Auto-save notification indicator -->
     <div class="save-indicator" id="saveIndicator">
         <span data-i18n="data_saved">💾 Data saved automatically</span>
     </div>
     
-    <!-- Confirmation modal -->
+    <!-- Confirmation modal for delete actions -->
     <div class="modal" id="confirmModal">
         <div class="modal-content">
             <div class="modal-title" id="modalTitle" data-i18n="confirm_action">⚠️ Confirm Action</div>
@@ -80,11 +97,12 @@
         </div>
     </div>
 
-    <!-- Add Person modal -->
+    <!-- Modal for adding new people -->
     <div class="modal" id="addPersonModal">
         <div class="modal-content">
             <div class="modal-title" data-i18n="add_new_person_title">👤 Add New Person</div>
             <div class="modal-form">
+                <!-- Person name input field -->
                 <input type="text" id="personNameInput" data-i18n-placeholder="person_name_placeholder" placeholder="Person's name" maxlength="50">
                 <div class="modal-buttons">
                     <button class="modal-btn modal-btn-confirm" id="addPersonConfirm" data-i18n="add">
@@ -98,11 +116,12 @@
         </div>
     </div>
 
-    <!-- Language Toggle -->
+    <!-- Language toggle button (English/Portuguese) -->
     <div class="language-toggle" onclick="debtManager.toggleLanguage()" data-i18n-title="change_language">
         <span class="language-flag" id="languageFlag">🇺🇸</span>
     </div>
 
+    <!-- Main application JavaScript -->
     <script src="js/app.js"></script>
 </body>
 </html>

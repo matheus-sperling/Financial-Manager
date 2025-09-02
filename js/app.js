@@ -1,4 +1,6 @@
+// Main application class responsible for managing debts, themes, and languages
 class DebtManager {
+    // Constructor initializes the debt manager with saved data and settings
     constructor() {
         this.debts = this.loadData();
         this.draggedPersonElement = null;
@@ -9,6 +11,7 @@ class DebtManager {
         this.init();
     }
 
+    // Initialize the application components and event listeners
     init() {
         this.applyTheme(this.currentTheme);
         this.applyLanguage(this.currentLanguage);
@@ -17,14 +20,17 @@ class DebtManager {
         window.addEventListener('beforeunload', () => this.saveData());
     }
 
+    // Load theme preference from localStorage or default to light theme
     loadTheme() {
         return localStorage.getItem('theme') || 'light';
     }
 
+    // Save current theme preference to localStorage
     saveTheme(theme) {
         localStorage.setItem('theme', theme);
     }
 
+    // Apply the selected theme to the document and update theme icon
     applyTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         const themeIcon = document.querySelector('.theme-icon');
@@ -34,20 +40,24 @@ class DebtManager {
         this.currentTheme = theme;
     }
 
+    // Toggle between light and dark themes
     toggleTheme() {
         const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
         this.applyTheme(newTheme);
         this.saveTheme(newTheme);
     }
 
+    // Load language preference from localStorage or default to English
     loadLanguage() {
         return localStorage.getItem('language') || 'en';
     }
 
+    // Save current language preference to localStorage
     saveLanguage(language) {
         localStorage.setItem('language', language);
     }
 
+    // Return translation object containing all text in Portuguese and English
     getTranslations() {
         return {
             'pt-BR': {
@@ -151,6 +161,7 @@ class DebtManager {
         };
     }
 
+    // Translate a text key to current language with optional parameter substitution
     translate(key, params = {}) {
         let text = this.translations[this.currentLanguage][key] || key;
         
@@ -161,6 +172,7 @@ class DebtManager {
         return text;
     }
 
+    // Apply selected language to all UI elements and update flag
     applyLanguage(language) {
         this.currentLanguage = language;
         
@@ -190,6 +202,7 @@ class DebtManager {
         this.updateSummary();
     }
 
+    // Toggle between Portuguese and English languages
     toggleLanguage() {
         const newLanguage = this.currentLanguage === 'pt-BR' ? 'en' : 'pt-BR';
         this.applyLanguage(newLanguage);
@@ -197,6 +210,7 @@ class DebtManager {
         this.renderDebts();
     }
 
+    // Setup event listeners and behavior for the add person modal
     setupAddPersonModal() {
         const addPersonModal = document.getElementById('addPersonModal');
         const addPersonConfirm = document.getElementById('addPersonConfirm');
@@ -235,6 +249,7 @@ class DebtManager {
         });
     }
 
+    // Display the add person modal and focus on input field
     showAddPersonModal() {
         const addPersonModal = document.getElementById('addPersonModal');
         const personNameInput = document.getElementById('personNameInput');
@@ -242,6 +257,7 @@ class DebtManager {
         setTimeout(() => personNameInput.focus(), 100);
     }
 
+    // Load debt data from localStorage or return default data if none exists
     loadData() {
         const savedData = localStorage.getItem('debtManager');
         if (savedData) {
@@ -254,6 +270,7 @@ class DebtManager {
         return this.getDefaultData();
     }
 
+    // Return sample default data for demonstration purposes
     getDefaultData() {
         return {
             'John': [
@@ -268,11 +285,13 @@ class DebtManager {
         };
     }
 
+    // Save current debt data to localStorage and show save indicator
     saveData() {
         localStorage.setItem('debtManager', JSON.stringify(this.debts));
         this.showSaveIndicator();
     }
 
+    // Display temporary save confirmation indicator
     showSaveIndicator() {
         const indicator = document.getElementById('saveIndicator');
         indicator.classList.add('show');
@@ -281,6 +300,7 @@ class DebtManager {
         }, 2000);
     }
 
+    // Display confirmation modal with custom title, message and callback
     showConfirmModal(title, message, onConfirm) {
         const modal = document.getElementById('confirmModal');
         const modalTitle = document.getElementById('modalTitle');
@@ -321,6 +341,7 @@ class DebtManager {
         };
     }
 
+    // Format numeric value as currency based on current language (BRL/USD)
     formatCurrency(value) {
         const locale = this.currentLanguage === 'pt-BR' ? 'pt-BR' : 'en-US';
         const currency = this.currentLanguage === 'pt-BR' ? 'BRL' : 'USD';
@@ -331,12 +352,14 @@ class DebtManager {
         }).format(value);
     }
 
+    // Calculate total debt amount for a person, optionally including hidden debts
     calculatePersonTotal(personDebts, includeHidden = false) {
         return personDebts.reduce((sum, debt) => {
             return sum + (includeHidden || !debt.hidden ? debt.value : 0);
         }, 0);
     }
 
+    // Calculate total debt amount across all people (excluding hidden debts)
     calculateTotalDebt() {
         let total = 0;
         for (let person in this.debts) {
@@ -345,6 +368,7 @@ class DebtManager {
         return total;
     }
 
+    // Calculate total amount of hidden debts across all people
     calculateHiddenDebt() {
         let total = 0;
         for (let person in this.debts) {
@@ -355,12 +379,14 @@ class DebtManager {
         return total;
     }
 
+    // Update summary cards with current debt statistics
     updateSummary() {
         document.getElementById('totalDebt').textContent = this.formatCurrency(this.calculateTotalDebt());
         document.getElementById('totalPeople').textContent = Object.keys(this.debts).length;
         document.getElementById('hiddenDebt').textContent = this.formatCurrency(this.calculateHiddenDebt());
     }
 
+    // Render the complete debt list interface for all people
     renderDebts() {
         const debtsList = document.getElementById('debtsList');
         debtsList.innerHTML = '';
@@ -456,6 +482,7 @@ class DebtManager {
         this.updateSummary();
     }
 
+    // Setup drag and drop functionality for people and debt rows
     setupDragAndDrop() {
         const personSections = document.querySelectorAll('.person-section');
         personSections.forEach(section => {
@@ -474,11 +501,13 @@ class DebtManager {
         });
     }
 
+    // Handle drag start event for person sections
     handlePersonDragStart(e) {
         this.draggedPersonElement = e.currentTarget;
         e.currentTarget.classList.add('dragging');
     }
 
+    // Handle drag over event for person sections
     handlePersonDragOver(e) {
         e.preventDefault();
         if (this.draggedPersonElement && e.currentTarget !== this.draggedPersonElement) {
@@ -486,6 +515,7 @@ class DebtManager {
         }
     }
 
+    // Handle drop event to reorder person sections
     handlePersonDrop(e) {
         e.preventDefault();
         if (this.draggedPersonElement && e.currentTarget !== this.draggedPersonElement) {
@@ -510,6 +540,7 @@ class DebtManager {
         e.currentTarget.classList.remove('drag-over');
     }
 
+    // Clean up drag styling after person drag operation
     handlePersonDragEnd(e) {
         e.currentTarget.classList.remove('dragging');
         document.querySelectorAll('.person-section').forEach(section => {
@@ -518,11 +549,13 @@ class DebtManager {
         this.draggedPersonElement = null;
     }
 
+    // Handle drag start event for debt table rows
     handleDebtDragStart(e) {
         this.draggedDebtElement = e.currentTarget;
         e.currentTarget.classList.add('dragging');
     }
 
+    // Handle drag over event for debt table rows (same person only)
     handleDebtDragOver(e) {
         e.preventDefault();
         if (this.draggedDebtElement && e.currentTarget !== this.draggedDebtElement && 
@@ -531,6 +564,7 @@ class DebtManager {
         }
     }
 
+    // Handle drop event to reorder debts within same person
     handleDebtDrop(e) {
         e.preventDefault();
         if (this.draggedDebtElement && e.currentTarget !== this.draggedDebtElement &&
@@ -550,6 +584,7 @@ class DebtManager {
         e.currentTarget.classList.remove('drag-over');
     }
 
+    // Clean up drag styling after debt drag operation
     handleDebtDragEnd(e) {
         e.currentTarget.classList.remove('dragging');
         document.querySelectorAll('.debt-table tr').forEach(row => {
@@ -558,6 +593,7 @@ class DebtManager {
         this.draggedDebtElement = null;
     }
 
+    // Add new debt entry for specified person with validation
     addDebt(person) {
         const descInput = document.getElementById(`desc-${person}`);
         const valueInput = document.getElementById(`value-${person}`);
@@ -582,6 +618,7 @@ class DebtManager {
         }
     }
 
+    // Remove specific debt after user confirmation
     removeDebt(person, index) {
         const debt = this.debts[person][index];
         this.showConfirmModal(
@@ -598,6 +635,7 @@ class DebtManager {
         );
     }
 
+    // Duplicate an existing debt entry for the same person
     repeatDebt(person, index) {
         const originalDebt = this.debts[person][index];
         const newDebt = {
@@ -611,6 +649,7 @@ class DebtManager {
         this.renderDebts();
     }
 
+    // Edit existing debt description and amount with validation
     editDebt(person, index) {
         const currentDebt = this.debts[person][index];
         
@@ -643,12 +682,14 @@ class DebtManager {
         this.renderDebts();
     }
 
+    // Toggle debt visibility (hidden/visible) for calculations
     toggleDebtVisibility(person, index) {
         this.debts[person][index].hidden = !this.debts[person][index].hidden;
         this.saveData();
         this.renderDebts();
     }
 
+    // Remove person and all their debts after confirmation
     removePerson(person) {
         const totalDebts = this.debts[person].length;
         const totalValue = this.calculatePersonTotal(this.debts[person], true);
@@ -668,6 +709,7 @@ class DebtManager {
         );
     }
 
+    // Add new person using prompt dialog (legacy method)
     addNewPerson() {
         const personName = prompt(this.translate('new_person_name'));
         if (personName && personName.trim() && !this.debts[personName.trim()]) {
@@ -679,6 +721,7 @@ class DebtManager {
         }
     }
 
+    // Clear all debts from all people after confirmation
     clearAllDebts() {
         const totalPeople = Object.keys(this.debts).length;
         const totalValue = this.calculateTotalDebt() + this.calculateHiddenDebt();
@@ -698,12 +741,15 @@ class DebtManager {
     }
 }
 
+// Initialize the main debt manager instance
 const debtManager = new DebtManager();
 
+// Global function to show add person modal
 function addNewPerson() {
     debtManager.showAddPersonModal();
 }
 
+// Global function to clear all debts
 function clearAllDebts() {
     debtManager.clearAllDebts();
 }
