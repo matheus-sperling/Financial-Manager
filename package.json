@@ -1,12 +1,14 @@
 {
-  "name": "gerenciador-dividas",
+  "name": "debt-manager",
   "version": "1.0.0",
-  "description": "Uma aplicação web simples e intuitiva para controlar suas dívidas pessoais com outras pessoas",
+  "description": "A simple and intuitive web application to manage your personal debts with other people",
   "main": "index.html",
+  "type": "module",
   "scripts": {
     "start": "npx serve .",
     "dev": "npx live-server .",
-    "lint": "echo 'No linting configured'",
+    "lint": "npx eslint js/",
+    "lint:fix": "npx eslint js/ --fix",
     "test": "echo 'No tests configured'"
   },
   "keywords": [
@@ -18,18 +20,21 @@
     "html",
     "css",
     "javascript",
-    "local-storage"
+    "local-storage",
+    "modular-javascript"
   ],
-  "author": "Your Name",
+  "author": "Matheus Sperling",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/gerenciador-dividas.git"
+    "url": "https://github.com/yourusername/debt-manager.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/gerenciador-dividas/issues"
+    "url": "https://github.com/yourusername/debt-manager/issues"
   },
-  "homepage": "https://github.com/yourusername/gerenciador-dividas#readme",
-  "devDependencies": {},
+  "homepage": "https://github.com/yourusername/debt-manager#readme",
+  "devDependencies": {
+    "eslint": "^8.0.0"
+  },
   "dependencies": {}
 }

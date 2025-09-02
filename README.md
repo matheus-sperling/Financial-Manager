@@ -39,8 +39,15 @@ debt-manager/
 ├── css/
 │   └── styles.css      # Application styles with dark mode support
 ├── js/
-│   └── app.js          # Application logic
-├── package.json        # Project metadata
+│   ├── app.js          # Application entry point
+│   ├── modules/
+│   │   ├── DebtManager.js    # Main application logic
+│   │   ├── UIComponents.js   # UI components and modals
+│   │   ├── DragAndDrop.js    # Drag and drop functionality
+│   ├── utils/
+│   │   └── utils.js          # Utility functions
+├── package.json        # Project metadata and scripts
+├── .eslintrc.json      # ESLint configuration
 ├── LICENSE             # MIT License
 ├── .gitignore          # Git ignore rules
 └── README.md           # Documentation
@@ -76,6 +83,7 @@ debt-manager/
 - **HTML5**: Semantic structure with meta tags
 - **CSS3**: Modern styling with CSS variables, flexbox, grid, and animations
 - **JavaScript ES6+**: Application logic with classes and modern syntax
+- **ES Modules**: Modular JavaScript for better organization
 - **LocalStorage**: Data persistence in the browser
 
 ## 📱 Responsive Design
