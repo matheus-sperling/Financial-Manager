@@ -116,6 +116,42 @@
         </div>
     </div>
 
+    <!-- Alert modal for notifications -->
+    <div class="modal" id="alertModal">
+        <div class="modal-content">
+            <div class="modal-title" id="alertTitle">ℹ️ Information</div>
+            <div class="modal-message" id="alertMessage">
+                Message
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-confirm" id="alertOk" data-i18n="ok">
+                    ✅ OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prompt modal for user input -->
+    <div class="modal" id="promptModal">
+        <div class="modal-content">
+            <div class="modal-title" id="promptTitle">✏️ Input</div>
+            <div class="modal-message" id="promptMessage">
+                Please enter a value:
+            </div>
+            <div class="modal-form">
+                <input type="text" id="promptInput" placeholder="Enter value" maxlength="100">
+                <div class="modal-buttons">
+                    <button class="modal-btn modal-btn-confirm" id="promptConfirm" data-i18n="confirm">
+                        ✅ Confirm
+                    </button>
+                    <button class="modal-btn modal-btn-cancel" id="promptCancel" data-i18n="cancel">
+                        ❌ Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Language toggle button (English/Portuguese) -->
     <div class="language-toggle" onclick="debtManager.toggleLanguage()" data-i18n-title="change_language">
         <span class="language-flag" id="languageFlag">🇺🇸</span>

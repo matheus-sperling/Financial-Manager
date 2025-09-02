@@ -117,7 +117,11 @@ class DebtManager {
                 clear_all_confirm: '🗑️ Limpar Todas as Dívidas',
                 clear_all_message: 'Tem certeza de que deseja limpar TODAS as dívidas de {count} pessoas (total: {total})? Esta ação não pode ser desfeita.',
                 new_person_name: 'Nome da nova pessoa:',
-                default_action_confirm: 'Tem certeza de que deseja realizar esta ação?'
+                default_action_confirm: 'Tem certeza de que deseja realizar esta ação?',
+                ok: 'OK',
+                information: 'ℹ️ Informação',
+                input: '✏️ Entrada',
+                enter_value: 'Por favor, insira um valor:'
             },
             'en': {
                 title: '💰 Debt Manager',
@@ -168,7 +172,11 @@ class DebtManager {
                 clear_all_confirm: '🗑️ Clear All Debts',
                 clear_all_message: 'Are you sure you want to clear ALL debts from {count} people (total: {total})? This action cannot be undone.',
                 new_person_name: 'Name of the new person:',
-                default_action_confirm: 'Are you sure you want to perform this action?'
+                default_action_confirm: 'Are you sure you want to perform this action?',
+                ok: 'OK',
+                information: 'ℹ️ Information',
+                input: '✏️ Input',
+                enter_value: 'Please enter a value:'
             }
         };
     }
@@ -245,7 +253,10 @@ class DebtManager {
                 addPersonModal.classList.remove('show');
                 personNameInput.value = '';
             } else if (this.debts[personName]) {
-                alert(this.translate('person_exists_error'));
+                this.showAlertModal(
+                    this.translate('information'),
+                    this.translate('person_exists_error')
+                );
             }
         };
 
@@ -434,6 +445,102 @@ class DebtManager {
                 modal.classList.remove('show');
             }
         };
+    }
+
+    // Display alert modal with custom title and message
+    showAlertModal(title, message) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('alertModal');
+            const modalTitle = document.getElementById('alertTitle');
+            const modalMessage = document.getElementById('alertMessage');
+            const modalOkBtn = document.getElementById('alertOk');
+
+            modalTitle.textContent = title || this.translate('information');
+            modalMessage.textContent = message || '';
+            modalOkBtn.textContent = this.translate('ok') || 'OK';
+            
+            modal.classList.add('show');
+            
+            // Clone button to remove old event listeners
+            modalOkBtn.replaceWith(modalOkBtn.cloneNode(true));
+            const newOkBtn = document.getElementById('alertOk');
+            newOkBtn.textContent = this.translate('ok') || 'OK';
+            
+            const closeModal = () => {
+                modal.classList.remove('show');
+                resolve();
+            };
+            
+            newOkBtn.onclick = closeModal;
+            
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            };
+        });
+    }
+
+    // Display prompt modal for user input
+    showPromptModal(title, message, defaultValue = '') {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('promptModal');
+            const modalTitle = document.getElementById('promptTitle');
+            const modalMessage = document.getElementById('promptMessage');
+            const modalInput = document.getElementById('promptInput');
+            const modalConfirmBtn = document.getElementById('promptConfirm');
+            const modalCancelBtn = document.getElementById('promptCancel');
+
+            modalTitle.textContent = title || this.translate('input');
+            modalMessage.textContent = message || this.translate('enter_value');
+            modalInput.value = defaultValue;
+            modalConfirmBtn.textContent = this.translate('confirm');
+            modalCancelBtn.textContent = this.translate('cancel');
+            
+            modal.classList.add('show');
+            
+            // Focus on input after modal opens
+            setTimeout(() => {
+                modalInput.focus();
+                modalInput.select();
+            }, 100);
+            
+            // Clone buttons to remove old event listeners
+            modalConfirmBtn.replaceWith(modalConfirmBtn.cloneNode(true));
+            modalCancelBtn.replaceWith(modalCancelBtn.cloneNode(true));
+            
+            const newConfirmBtn = document.getElementById('promptConfirm');
+            const newCancelBtn = document.getElementById('promptCancel');
+            
+            newConfirmBtn.textContent = this.translate('confirm');
+            newCancelBtn.textContent = this.translate('cancel');
+            
+            const confirmAction = () => {
+                modal.classList.remove('show');
+                resolve(modalInput.value);
+            };
+            
+            const cancelAction = () => {
+                modal.classList.remove('show');
+                resolve(null);
+            };
+            
+            newConfirmBtn.onclick = confirmAction;
+            newCancelBtn.onclick = cancelAction;
+            
+            // Handle Enter key
+            modalInput.onkeypress = (e) => {
+                if (e.key === 'Enter') {
+                    confirmAction();
+                }
+            };
+            
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    cancelAction();
+                }
+            };
+        });
     }
 
     // Format numeric value as currency based on current language (BRL/USD)
@@ -729,7 +836,10 @@ class DebtManager {
             this.saveData();
             this.renderDebts();
         } else {
-            alert(this.translate('fill_fields_error'));
+            this.showAlertModal(
+                this.translate('information'),
+                this.translate('fill_fields_error')
+            );
         }
     }
 
@@ -765,25 +875,39 @@ class DebtManager {
     }
 
     // Edit existing debt description and amount with validation
-    editDebt(person, index) {
+    async editDebt(person, index) {
         const currentDebt = this.debts[person][index];
         
-        const newDescription = prompt(this.translate('edit_debt_description'), currentDebt.description);
+        const newDescription = await this.showPromptModal(
+            this.translate('edit'),
+            this.translate('edit_debt_description'),
+            currentDebt.description
+        );
         if (newDescription === null) return;
         
         const currency = this.currentLanguage === 'pt-BR' ? 'R$' : '$';
-        const newValueStr = prompt(this.translate('edit_debt_amount').replace('($)', `(${currency})`), currentDebt.value.toFixed(2));
+        const newValueStr = await this.showPromptModal(
+            this.translate('edit'),
+            this.translate('edit_debt_amount').replace('($)', `(${currency})`),
+            currentDebt.value.toFixed(2)
+        );
         if (newValueStr === null) return;
         
         const newValue = parseFloat(newValueStr.replace(',', '.'));
         
         if (newDescription.trim() === '') {
-            alert(this.translate('description_empty_error'));
+            await this.showAlertModal(
+                this.translate('information'),
+                this.translate('description_empty_error')
+            );
             return;
         }
         
         if (isNaN(newValue) || newValue <= 0) {
-            alert(this.translate('invalid_amount_error'));
+            await this.showAlertModal(
+                this.translate('information'),
+                this.translate('invalid_amount_error')
+            );
             return;
         }
         
@@ -825,32 +949,49 @@ class DebtManager {
     }
 
     // Add new person using prompt dialog (legacy method)
-    addNewPerson() {
-        const personName = prompt(this.translate('new_person_name'));
+    async addNewPerson() {
+        const personName = await this.showPromptModal(
+            this.translate('add_new_person_title'),
+            this.translate('new_person_name'),
+            ''
+        );
         if (personName && personName.trim() && !this.debts[personName.trim()]) {
             this.debts[personName.trim()] = [];
             this.saveData();
             this.renderDebts();
-        } else if (this.debts[personName.trim()]) {
-            alert(this.translate('person_exists_error'));
+        } else if (personName && this.debts[personName.trim()]) {
+            await this.showAlertModal(
+                this.translate('information'),
+                this.translate('person_exists_error')
+            );
         }
     }
 
     // Edit person name with validation and update all references
-    editPersonName(oldName) {
-        const newName = prompt(this.translate('edit_person_name'), oldName);
+    async editPersonName(oldName) {
+        const newName = await this.showPromptModal(
+            this.translate('edit'),
+            this.translate('edit_person_name'),
+            oldName
+        );
         if (newName === null) return;
         
         const trimmedName = newName.trim();
         if (trimmedName === '') {
-            alert(this.translate('person_name_empty_error'));
+            await this.showAlertModal(
+                this.translate('information'),
+                this.translate('person_name_empty_error')
+            );
             return;
         }
         
         if (trimmedName === oldName) return;
         
         if (this.debts[trimmedName]) {
-            alert(this.translate('person_exists_error'));
+            await this.showAlertModal(
+                this.translate('information'),
+                this.translate('person_exists_error')
+            );
             return;
         }
         
