@@ -1,0 +1,19 @@
+/* Responsive design for mobile devices */
+@media (max-width: 768px) {
+    .person-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .add-debt {
+        flex-direction: column;
+    }
+    
+    .debt-table {
+        font-size: 14px;
+    }
+    
+    .actions-cell {
+        flex-direction: column;
+    }
+}

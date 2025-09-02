@@ -50,6 +50,12 @@ export class DragAndDropHandler {
             section.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 if (this.draggedPersonElement && this.draggedPersonElement !== section) {
+                    // Remove drag-over from all sections first
+                    document.querySelectorAll('.person-section').forEach(s => {
+                        s.classList.remove('drag-over');
+                    });
+                    
+                    // Add drag-over only to current target
                     section.classList.add('drag-over');
                 }
             });
@@ -108,6 +114,13 @@ export class DragAndDropHandler {
         e.preventDefault();
         if (this.draggedDebtElement && e.currentTarget !== this.draggedDebtElement && 
             e.currentTarget.dataset.person === this.draggedDebtElement.dataset.person) {
+            
+            // Remove drag-over from all rows first
+            document.querySelectorAll('.debt-table tr').forEach(row => {
+                row.classList.remove('drag-over');
+            });
+            
+            // Add drag-over only to current target
             e.currentTarget.classList.add('drag-over');
         }
     }

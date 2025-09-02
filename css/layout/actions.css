@@ -1,0 +1,7 @@
+/* Main action buttons layout */
+.actions {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #ecf0f1;
+}

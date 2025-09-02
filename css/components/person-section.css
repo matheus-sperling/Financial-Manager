@@ -1,0 +1,87 @@
+/* Individual person section container */
+.person-section {
+    margin-bottom: 40px;
+    background: var(--section-bg);
+    border-radius: 15px;
+    padding: 25px;
+    position: relative;
+}
+
+/* Dragging state for person sections */
+.person-section.dragging {
+    opacity: 0.5;
+    transform: rotate(2deg);
+}
+
+/* Drag over state for person sections */
+.person-section.drag-over {
+    border: 3px dashed var(--primary-blue);
+    background: var(--primary-blue)20;
+}
+
+/* Person header layout and styling */
+.person-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 3px solid var(--primary-blue);
+}
+
+/* Person name display with drag handle */
+.person-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 200px;
+}
+
+/* Editable person name styling */
+.editable-name {
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 2px 5px;
+    transition: all 0.3s ease;
+}
+
+.editable-name:hover {
+    background: var(--primary-green);
+    color: white;
+    transform: scale(1.02);
+}
+
+.person-total {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--primary-green);
+    background: var(--card-bg);
+    padding: 8px 15px;
+    border-radius: 25px;
+    box-shadow: 0 3px 10px var(--shadow-color);
+}
+
+.drag-handle {
+    cursor: grab;
+    color: #95a5a6;
+    font-size: 1.2rem;
+    padding: 5px;
+    user-select: none;
+}
+
+.drag-handle:hover {
+    color: var(--primary-blue);
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.person-controls {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}

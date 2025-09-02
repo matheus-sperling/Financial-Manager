@@ -39,3 +39,6 @@ pids
 # Temporary files
 *.tmp
 *.temp
+
+# Documentation for AI assistants
+CLAUDE.md

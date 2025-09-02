@@ -1,0 +1,44 @@
+/* Form input styling */
+.add-debt {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.add-debt input {
+    padding: 10px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    flex: 1;
+    min-width: 150px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    box-sizing: border-box;
+}
+
+.add-debt input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+}
+
+/* Checkbox styling */
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hidden-label {
+    font-size: 12px;
+    color: var(--text-light);
+    font-weight: normal;
+}
+
+/* Form stability - prevent layout shifts during language changes */
+.add-debt input {
+    flex: 1;
+    min-width: 150px;
+    box-sizing: border-box;
+}
