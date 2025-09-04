@@ -79,6 +79,21 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [isDraggingPerson, setIsDraggingPerson] = useState(false);
+  
+  // Touch drag state for mobile support
+  const [touchDragState, setTouchDragState] = useState<{
+    isDragging: boolean;
+    dragType: 'person' | 'debt' | null;
+    dragIndex: number | null;
+    startY: number;
+    currentY: number;
+  }>({
+    isDragging: false,
+    dragType: null,
+    dragIndex: null,
+    startY: 0,
+    currentY: 0
+  });
 
   const handleAddDebt = () => {
     if (newDebt.description && newDebt.value) {
@@ -164,14 +179,106 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
     setDragOverIndex(null);
   };
 
+  // Touch handlers for mobile drag-and-drop support
+  const handleTouchStart = (e: React.TouchEvent, type: 'person' | 'debt', index?: number) => {
+    const touch = e.touches[0];
+    setTouchDragState({
+      isDragging: true,
+      dragType: type,
+      dragIndex: type === 'debt' ? index! : personIndex,
+      startY: touch.clientY,
+      currentY: touch.clientY
+    });
+    
+    if (type === 'person') {
+      setIsDraggingPerson(true);
+    }
+    
+    // Try to prevent scrolling, but don't fail if it's passive
+    try {
+      e.preventDefault();
+    } catch {
+      // Ignore passive event listener errors
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchDragState.isDragging) return;
+    
+    const touch = e.touches[0];
+    setTouchDragState(prev => ({
+      ...prev,
+      currentY: touch.clientY
+    }));
+    
+    // Calculate which item we're hovering over based on touch position
+    const elements = document.querySelectorAll('[data-drag-target]');
+    let hoveredIndex = null;
+    
+    elements.forEach((element, index) => {
+      const rect = element.getBoundingClientRect();
+      if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        hoveredIndex = index;
+      }
+    });
+    
+    if (hoveredIndex !== null && touchDragState.dragType === 'debt') {
+      setDragOverIndex(hoveredIndex);
+    }
+    
+    // Try to prevent scrolling, but don't fail if it's passive
+    try {
+      e.preventDefault();
+    } catch {
+      // Ignore passive event listener errors
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchDragState.isDragging) return;
+    
+    const touch = e.changedTouches[0];
+    const elements = document.querySelectorAll('[data-drag-target]');
+    let dropIndex = null;
+    
+    // Find the element we're dropping on
+    elements.forEach((element, index) => {
+      const rect = element.getBoundingClientRect();
+      if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        dropIndex = index;
+      }
+    });
+    
+    // Perform the reorder operation
+    if (dropIndex !== null && touchDragState.dragIndex !== null) {
+      if (touchDragState.dragType === 'debt' && touchDragState.dragIndex !== dropIndex) {
+        onReorderDebts(person.id, touchDragState.dragIndex, dropIndex);
+      } else if (touchDragState.dragType === 'person' && touchDragState.dragIndex !== dropIndex) {
+        onReorderPeople(touchDragState.dragIndex, dropIndex);
+      }
+    }
+    
+    // Reset state
+    setTouchDragState({
+      isDragging: false,
+      dragType: null,
+      dragIndex: null,
+      startY: 0,
+      currentY: 0
+    });
+    setIsDraggingPerson(false);
+    setDragOverIndex(null);
+  };
+
   const visibleDebts = person.debts.filter(d => !d.isHidden);
   const totalVisible = visibleDebts.reduce((sum, debt) => sum + debt.value, 0);
 
   return (
     <Card 
-      className={`w-full mb-6 transition-all duration-200 ${isDraggingPerson ? 'opacity-50' : ''}`}
+      className={`w-full mb-6 transition-all duration-200 ${isDraggingPerson || touchDragState.isDragging ? 'opacity-50' : ''}`}
       onDragOver={handlePersonDragOver}
       onDrop={handlePersonDrop}
+      data-drag-target
     >
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -180,7 +287,11 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
               draggable
               onDragStart={handlePersonDragStart}
               onDragEnd={handlePersonDragEnd}
-              className="cursor-move"
+              onTouchStart={(e) => handleTouchStart(e, 'person')}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className="cursor-move select-none"
+              style={{ touchAction: 'none' }}
             >
               <GripVertical className="h-5 w-5 text-muted-foreground" />
             </div>
@@ -258,10 +369,11 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
               {person.debts.map((debt, index) => (
                 <Card 
                   key={debt.id} 
-                  className={`p-4 transition-all duration-200 ${debt.isHidden ? 'opacity-60 bg-muted' : ''} ${dragOverIndex === index ? 'border-primary' : ''}`}
+                  className={`p-4 transition-all duration-200 ${debt.isHidden ? 'opacity-60 bg-muted' : ''} ${dragOverIndex === index ? 'border-primary' : ''} ${touchDragState.isDragging && touchDragState.dragType === 'debt' && touchDragState.dragIndex === index ? 'opacity-50' : ''}`}
                   onDragOver={(e) => handleDebtDragOver(e, index)}
                   onDragLeave={handleDebtDragLeave}
                   onDrop={(e) => handleDebtDrop(e, index)}
+                  data-drag-target
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex items-start gap-2">
@@ -269,7 +381,11 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
                         draggable
                         onDragStart={(e) => handleDebtDragStart(e, index)}
                         onDragEnd={handleDebtDragEnd}
-                        className="cursor-move"
+                        onTouchStart={(e) => handleTouchStart(e, 'debt', index)}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                        className="cursor-move select-none"
+                        style={{ touchAction: 'none' }}
                       >
                         <GripVertical className="h-4 w-4 text-muted-foreground mt-0.5" />
                       </div>
@@ -352,17 +468,22 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
                   {person.debts.map((debt, index) => (
                     <tr 
                       key={debt.id} 
-                      className={`border-b hover:bg-muted/50 transition-all duration-200 ${debt.isHidden ? 'opacity-60' : ''} ${dragOverIndex === index ? 'bg-primary/10' : ''}`}
+                      className={`border-b hover:bg-muted/50 transition-all duration-200 ${debt.isHidden ? 'opacity-60' : ''} ${dragOverIndex === index ? 'bg-primary/10' : ''} ${touchDragState.isDragging && touchDragState.dragType === 'debt' && touchDragState.dragIndex === index ? 'opacity-50' : ''}`}
                       onDragOver={(e) => handleDebtDragOver(e, index)}
                       onDragLeave={handleDebtDragLeave}
                       onDrop={(e) => handleDebtDrop(e, index)}
+                      data-drag-target
                     >
                       <td className="p-2">
                         <div
                           draggable
                           onDragStart={(e) => handleDebtDragStart(e, index)}
                           onDragEnd={handleDebtDragEnd}
-                          className="cursor-move"
+                          onTouchStart={(e) => handleTouchStart(e, 'debt', index)}
+                          onTouchMove={handleTouchMove}
+                          onTouchEnd={handleTouchEnd}
+                          className="cursor-move select-none"
+                          style={{ touchAction: 'none' }}
                         >
                           <GripVertical className="h-4 w-4 text-muted-foreground" />
                         </div>
