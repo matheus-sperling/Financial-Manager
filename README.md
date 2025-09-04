@@ -22,35 +22,50 @@ A simple and intuitive web application to manage your personal debts with other 
    cd debt-manager
    ```
 
-2. **Open `index.html`** in any modern web browser
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-3. **Start using**:
+3. **Start development server**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser** to `http://localhost:5173`
+
+5. **Start using**:
    - Click "Add New Person" to register someone
    - Fill in the debt description and amount
    - Use action buttons to edit, duplicate or remove debts
    - Drag the ⋮⋮ icon to reorder people or debts
    - Click the moon/sun icon to toggle dark mode
+   - Toggle language with the flag button
 
 ## 📁 Project Structure
 
 ```
 debt-manager/
-├── index.html          # Main page
-├── css/
-│   └── styles.css      # Application styles with dark mode support
-├── js/
-│   ├── app.js          # Application entry point
-│   ├── modules/
-│   │   ├── DebtManager.js    # Main application logic
-│   │   ├── UIComponents.js   # UI components and modals
-│   │   ├── DragAndDrop.js    # Drag and drop functionality
-│   ├── utils/
-│   │   └── utils.js          # Utility functions
-├── package.json        # Project metadata and scripts
-├── .eslintrc.json      # ESLint configuration
-├── LICENSE             # MIT License
-├── .gitignore          # Git ignore rules
-└── README.md           # Documentation
+├── src/
+│   ├── components/
+│   │   ├── ui/                 # shadcn/ui base components
+│   │   ├── DebtSummary.tsx     # Financial summary cards
+│   │   └── DebtTable.tsx       # Responsive debt management
+│   ├── hooks/
+│   │   └── useDebtManager.ts   # State management hook
+│   ├── lib/
+│   │   └── utils.ts            # Utility functions
+│   ├── types/
+│   │   └── debt.ts             # TypeScript definitions
+│   ├── App.tsx                 # Main application
+│   ├── main.tsx                # Entry point
+│   └── index.css               # Global styles
+├── index.html                  # HTML template
+├── package.json                # Dependencies and scripts
+├── tsconfig.json              # TypeScript configuration
+├── tailwind.config.js         # Tailwind CSS configuration
+├── vite.config.ts             # Vite build configuration
+└── README.md                  # Documentation
 ```
 
 ## 💡 Detailed Features
@@ -80,18 +95,23 @@ debt-manager/
 
 ## 🔧 Technologies Used
 
-- **HTML5**: Semantic structure with meta tags
-- **CSS3**: Modern styling with CSS variables, flexbox, grid, and animations
-- **JavaScript ES6+**: Application logic with classes and modern syntax
-- **ES Modules**: Modular JavaScript for better organization
-- **LocalStorage**: Data persistence in the browser
+- **React 19**: Latest React with modern hooks and concurrent features
+- **TypeScript**: Type-safe development with excellent developer experience
+- **Vite**: Lightning-fast build tool with Hot Module Replacement
+- **Tailwind CSS**: Utility-first CSS framework for rapid styling
+- **shadcn/ui**: Beautiful, accessible, and customizable component library
+- **Lucide React**: Modern icon library with consistent design
+- **ESLint**: Code linting and quality enforcement
+- **LocalStorage**: Client-side data persistence
 
 ## 📱 Responsive Design
 
-The application is fully responsive and adapts to different screen sizes:
-- **Desktop**: Full layout with all features
-- **Tablet**: Adapted controls and tables
-- **Mobile**: Touch-optimized interface with larger buttons
+The application features excellent responsiveness across all devices:
+- **Desktop**: Full-featured table layout with hover effects
+- **Tablet**: Adapted layout with optimized touch targets
+- **Mobile**: Card-based layout for easy thumb navigation
+- **Touch-Optimized**: 44px minimum touch targets following accessibility guidelines
+- **Mobile-First**: Designed mobile-first with progressive enhancement
 
 ## 🔒 Privacy
 
