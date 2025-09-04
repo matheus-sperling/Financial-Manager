@@ -1,114 +1,124 @@
-# Financial Manager (Debt Manager)
-Financial Manager is a client-side only HTML5, CSS3, and JavaScript ES6+ web application for tracking personal debts with other people. It uses localStorage for data persistence and supports dark/light themes with English/Portuguese internationalization.
+# CLAUDE.md
 
-Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Working Effectively
-- **Install dependencies**: `npm install` -- completes in < 1 second.
-- **Lint the code**: `npm run lint` -- completes in < 1 second. ALWAYS run before committing changes.
-- **Start development server**: `npm run dev` -- starts live-server with hot reload on http://127.0.0.1:8080 in < 10 seconds.
-- **Start production-like server**: `npm run start` -- starts static server on http://localhost:3000 in < 5 seconds.
-- **Run tests**: `npm test` -- no tests configured, just echoes a message.
+## Development Commands
 
-## Validation
-- **CRITICAL**: ALWAYS manually validate changes by running the application in a browser after making any modifications.
-- **Manual Testing Scenarios**:
-  - Add a new person using "Add New Person" button and verify they appear in the list.
-  - Add a debt to a person with description and amount, verify it appears in their table.
-  - Test Edit functionality by clicking "Edit" on any debt and modifying values.
-  - Test Hide/Show functionality by checking/unchecking the "Hidden" checkbox.
-  - Test theme toggle by clicking the moon/sun button in the header.
-  - Test drag and drop by dragging the ⋮⋮ icons to reorder people or debts.
-  - Verify data persists by refreshing the page.
-  - Test Clear All Debts functionality.
-- **Always run `npm run lint` before committing** or ESLint errors will fail CI validation.
-- **Browser Testing**: Open application in browser and interact with all modified features.
-- **LocalStorage**: Data automatically saves to browser localStorage - refresh page to verify persistence.
+```bash
+# Setup
+npm install
 
-## Common Tasks
-The application has NO build process - it runs directly in the browser. Changes to HTML/CSS/JS files are immediately visible when the page is refreshed (or automatically with `npm run dev`).
+# Development server with hot reload on http://localhost:5173
+npm run dev
 
-### Development Workflow
-1. `npm install` (if dependencies changed)
-2. `npm run dev` (start development server with hot reload)
-3. Make changes to source files
-4. Changes reflect immediately in browser (live-server auto-refreshes)
-5. `npm run lint` (validate code quality)
-6. Manual testing in browser
-7. Commit changes
+# Build for production
+npm run build
 
-### Key Project Structure
-```
-Financial-Manager/
-├── index.html              # Main application page
-├── package.json            # Dependencies and npm scripts
-├── eslint.config.js        # ESLint configuration (modern)
-├── .eslintrc.json          # ESLint configuration (legacy backup)
-├── css/                    # Styles organized by purpose
-│   ├── components/         # UI component styles (buttons, modals, forms)
-│   ├── layout/             # Layout styles (header, base, responsive)
-│   └── themes/             # Theme variables and dark mode styles
-├── js/                     # JavaScript modules
-│   ├── app.js              # Application entry point
-│   ├── modules/            # Core application modules
-│   │   ├── DebtManager.js  # Main application logic and state
-│   │   ├── UIComponents.js # UI interaction handlers
-│   │   └── DragAndDrop.js  # Drag and drop functionality
-│   ├── patterns/           # Design pattern implementations
-│   │   ├── Factory.js      # Factory patterns for validation/components
-│   │   ├── Observer.js     # Observer pattern for events
-│   │   └── State.js        # State management utilities
-│   └── utils/              # Utility functions
-│       └── utils.js        # Currency formatting, localStorage, etc.
+# Preview production build
+npm run preview
+
+# Code quality - ALWAYS run before committing
+npm run lint
+npm run lint:fix  # Auto-fix linting issues
+
+# Tests (no tests configured)
+npm test
 ```
 
-### Frequently Modified Files
-- **`js/modules/DebtManager.js`**: Core application logic, add/edit/remove functionality
-- **`js/modules/UIComponents.js`**: Modal handling, UI interactions
-- **`css/components/`**: When changing UI component styling
-- **`css/themes/`**: When modifying dark mode or theme variables
-- **`index.html`**: When adding new UI elements or changing structure
+## 🚢 Deployment to GitHub Pages
+
+This project is configured for one-command deployment to GitHub Pages.
+
+```bash
+# Deploy to GitHub Pages
+npm run deploy
+```
+
+This command builds the application and pushes the `dist` directory to the `gh-pages` branch.
+
+**Forking**: If you fork this repository, you must update two files for deployment to work correctly:
+1.  `package.json`: Update the `homepage` field to your new GitHub Pages URL.
+2.  `vite.config.ts`: Update the `base` field to your new repository name (e.g., `'/my-repo/'`).
+
+## Project Architecture
+
+This is a modern React application built with TypeScript, Vite, Tailwind CSS, and shadcn/ui components. It features excellent mobile responsiveness and follows modern web development best practices.
+
+### Key Architecture Patterns
+- **React 19**: Latest React with modern hooks and state management
+- **TypeScript**: Type-safe development with excellent IntelliSense
+- **Tailwind CSS**: Utility-first CSS framework for rapid UI development
+- **shadcn/ui**: Beautifully designed, accessible, and customizable components
+- **Vite**: Lightning-fast build tool with HMR
+- **Mobile-First Design**: Responsive design optimized for all device sizes
+- **Data Persistence**: All data automatically saved to browser localStorage
+
+### Core Application Structure
+
+```
+src/
+├── components/
+│   ├── ui/                 # shadcn/ui base components (Button, Card, Dialog, etc.)
+│   ├── DebtSummary.tsx     # Financial summary cards component
+│   └── DebtTable.tsx       # Responsive debt table/card component
+├── hooks/
+│   └── useDebtManager.ts   # Custom hook for state management
+├── lib/
+│   └── utils.ts            # Utility functions and helpers
+├── types/
+│   └── debt.ts             # TypeScript type definitions
+├── App.tsx                 # Main application component
+├── main.tsx                # Application entry point
+└── index.css               # Global styles and Tailwind imports
+
+```
 
 ### Key Application Features
-- **Person Management**: Add, edit, remove people who owe you money
-- **Debt Tracking**: Add, edit, duplicate, remove individual debts per person
+- **Person & Debt Management**: Add/edit/remove people and their associated debts
 - **Hidden Debts**: Mark debts as hidden to exclude from total calculations
-- **Drag and Drop**: Reorder people and debts using ⋮⋮ handles
-- **Themes**: Light/dark mode toggle with ☀️/🌙 button
-- **Internationalization**: English/Portuguese with automatic browser language detection
-- **Data Persistence**: All data automatically saved to localStorage
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
+- **Drag & Drop**: Reorder people and debts using ⋮⋮ handles (DragAndDrop.js)
+- **Themes**: Light/dark mode toggle with automatic persistence
+- **Internationalization**: English/Portuguese with browser language detection
+- **Responsive Design**: Mobile-first approach with table scrolling on small screens
 
-### Application Architecture
+## Development Workflow
+
+1. Make changes to HTML/CSS/JS files
+2. Changes reflect immediately in browser (with `npm run dev` for auto-refresh)
+3. **CRITICAL**: Always run `npm run lint` before committing
+4. **Manual testing required**: Test all modified features in browser
+5. Verify data persistence by refreshing the page
+
+### Manual Testing Scenarios
+Always test these scenarios after making changes:
+- Add/edit/remove persons and debts
+- Toggle hidden debts and verify total calculations
+- Test drag and drop reordering
+- Toggle theme and verify persistence
+- Refresh page to verify localStorage data persistence
+
+## Code Style & Patterns
+
+- **ESLint Configuration**: Uses modern eslint.config.js with 4-space indentation, single quotes, semicolons required
+- **ES6+ Features**: Classes, arrow functions, template literals, destructuring
+- **Module System**: All JS files use ES6 import/export
+- **Event System**: Custom events for inter-component communication via Observer pattern
+- **CSS Variables**: Theme system uses CSS custom properties for consistent theming
+- **Responsive Design**: Mobile-first CSS with flexbox/grid layouts
+
+## Important Implementation Details
+
 - **No Backend**: Pure frontend application, no server-side logic
-- **ES6 Modules**: Uses modern JavaScript module system
-- **Event-Driven**: Uses custom events and observer patterns
-- **Component-Based**: Modular CSS and JavaScript organization
-- **Pattern Implementation**: Factory, Observer, and State management patterns
+- **Browser Compatibility**: Requires modern browser with ES6+ support
+- **Data Storage**: Uses localStorage exclusively - inspect via browser dev tools
+- **Theme System**: CSS custom properties in css/themes/variables.css with data-theme attribute switching
+- **Internationalization**: Translation objects in DebtManager.js with automatic language detection
+- **Drag & Drop**: Custom implementation in DragAndDrop.js using HTML5 drag API
 
-### Testing Notes
-- **No Unit Tests**: Application doesn't have a test framework configured
-- **Manual Testing Required**: Always test UI functionality after changes
-- **Browser Compatibility**: Modern browsers only (ES6+ support required)
-- **Data Testing**: Use browser dev tools to inspect localStorage for data persistence
+## Frequently Modified Files
 
-### Common Commands Reference
-```bash
-# Quick setup
-npm install                 # < 1 second
-
-# Development
-npm run dev                 # Live server with hot reload (port 8080)
-npm run start              # Static server (port 3000)
-
-# Code Quality
-npm run lint               # < 1 second - NEVER SKIP
-npm run lint:fix           # Auto-fix linting issues
-
-# File sizes (reference)
-# 9 JavaScript files (excluding node_modules)
-# 13 CSS files
-# 1 HTML file
-```
-
-This is a straightforward client-side application with no complex build processes or long-running operations. All commands complete in seconds, making it ideal for rapid development and testing.
+- **DebtManager.js**: Core logic, adding new features, theme/language management
+- **UIComponents.js**: Modal behavior, form handling, UI interactions  
+- **css/components/**: When changing component styling
+- **css/themes/**: When modifying dark mode or theme variables
+- **index.html**: When adding new UI elements or changing structure

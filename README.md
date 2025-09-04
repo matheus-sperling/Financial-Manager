@@ -42,6 +42,20 @@ A simple and intuitive web application to manage your personal debts with other 
    - Click the moon/sun icon to toggle dark mode
    - Toggle language with the flag button
 
+## 🚢 Deployment to GitHub Pages
+
+This project is pre-configured for easy deployment to GitHub Pages.
+
+1.  **Deploy the application**:
+    ```bash
+    npm run deploy
+    ```
+    This command will automatically build the project and push the contents of the `dist` folder to the `gh-pages` branch on your repository. Your site will be available at the URL specified in your repository's settings.
+
+2.  **For Forks**: If you have forked this repository, you need to update two files before deploying:
+    *   In `package.json`, change the `homepage` value to your GitHub Pages URL (e.g., `https://<your-username>.github.io/<your-repo-name>/`).
+    *   In `vite.config.ts`, change the `base` value to your repository name (e.g., `base: '/<your-repo-name>/'`).
+
 ## 📁 Project Structure
 
 ```

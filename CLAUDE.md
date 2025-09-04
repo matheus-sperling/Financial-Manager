@@ -25,6 +25,21 @@ npm run lint:fix  # Auto-fix linting issues
 npm test
 ```
 
+## 🚢 Deployment to GitHub Pages
+
+This project is configured for one-command deployment to GitHub Pages.
+
+```bash
+# Deploy to GitHub Pages
+npm run deploy
+```
+
+This command builds the application and pushes the `dist` directory to the `gh-pages` branch.
+
+**Forking**: If you fork this repository, you must update two files for deployment to work correctly:
+1.  `package.json`: Update the `homepage` field to your new GitHub Pages URL.
+2.  `vite.config.ts`: Update the `base` field to your new repository name (e.g., `'/my-repo/'`).
+
 ## Project Architecture
 
 This is a modern React application built with TypeScript, Vite, Tailwind CSS, and shadcn/ui components. It features excellent mobile responsiveness and follows modern web development best practices.
