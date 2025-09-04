@@ -9,6 +9,7 @@ import { Edit2, Copy, Trash2, Eye, EyeOff, Plus, GripVertical } from 'lucide-rea
 
 interface DebtTableProps {
   person: Person;
+  personIndex: number;
   language: 'en' | 'pt';
   currency: 'BRL' | 'USD';
   onAddDebt: (personId: string, description: string, value: number) => void;
@@ -17,6 +18,8 @@ interface DebtTableProps {
   onDuplicateDebt: (personId: string, debtId: string) => void;
   onToggleHidden: (personId: string, debtId: string) => void;
   onRemovePerson: (personId: string) => void;
+  onReorderDebts: (personId: string, fromIndex: number, toIndex: number) => void;
+  onReorderPeople: (fromIndex: number, toIndex: number) => void;
 }
 
 const translations = {
@@ -68,12 +71,14 @@ const translations = {
   }
 };
 
-export function DebtTable({ person, language, currency, onAddDebt, onUpdateDebt, onRemoveDebt, onDuplicateDebt, onToggleHidden, onRemovePerson }: DebtTableProps) {
+export function DebtTable({ person, personIndex, language, currency, onAddDebt, onUpdateDebt, onRemoveDebt, onDuplicateDebt, onToggleHidden, onRemovePerson, onReorderDebts, onReorderPeople }: DebtTableProps) {
   const t = translations[language];
   const [newDebt, setNewDebt] = useState({ description: '', value: '' });
   const [editingDebt, setEditingDebt] = useState<Debt | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [isDraggingPerson, setIsDraggingPerson] = useState(false);
 
   const handleAddDebt = () => {
     if (newDebt.description && newDebt.value) {
@@ -95,15 +100,90 @@ export function DebtTable({ person, language, currency, onAddDebt, onUpdateDebt,
     }
   };
 
+  // Person drag handlers
+  const handlePersonDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('text/plain', `person-${personIndex}`);
+    e.dataTransfer.effectAllowed = 'move';
+    setIsDraggingPerson(true);
+  };
+
+  const handlePersonDragEnd = () => {
+    setIsDraggingPerson(false);
+  };
+
+  const handlePersonDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handlePersonDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const dragData = e.dataTransfer.getData('text/plain');
+    if (dragData.startsWith('person-')) {
+      const fromIndex = parseInt(dragData.split('-')[1]);
+      if (fromIndex !== personIndex) {
+        onReorderPeople(fromIndex, personIndex);
+      }
+    }
+  };
+
+  // Debt drag handlers
+  const handleDebtDragStart = (e: React.DragEvent, debtIndex: number) => {
+    const dragData = `debt|${person.id}|${debtIndex}`;
+    e.dataTransfer.setData('text/plain', dragData);
+    e.dataTransfer.effectAllowed = 'move';
+    e.stopPropagation(); // Prevent person drag when dragging debt
+  };
+
+  const handleDebtDragEnd = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDebtDragOver = (e: React.DragEvent, debtIndex: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(debtIndex);
+  };
+
+  const handleDebtDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDebtDrop = (e: React.DragEvent, toIndex: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const dragData = e.dataTransfer.getData('text/plain');
+    if (dragData.startsWith('debt|')) {
+      const [, dragPersonId, fromIndexStr] = dragData.split('|');
+      const fromIndex = parseInt(fromIndexStr);
+      if (dragPersonId === person.id && fromIndex !== toIndex) {
+        onReorderDebts(person.id, fromIndex, toIndex);
+      }
+    }
+    setDragOverIndex(null);
+  };
+
   const visibleDebts = person.debts.filter(d => !d.isHidden);
   const totalVisible = visibleDebts.reduce((sum, debt) => sum + debt.value, 0);
 
   return (
-    <Card className="w-full mb-6">
+    <Card 
+      className={`w-full mb-6 transition-all duration-200 ${isDraggingPerson ? 'opacity-50' : ''}`}
+      onDragOver={handlePersonDragOver}
+      onDrop={handlePersonDrop}
+    >
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-2">
-            <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
+            <div
+              draggable
+              onDragStart={handlePersonDragStart}
+              onDragEnd={handlePersonDragEnd}
+              className="cursor-move"
+            >
+              <GripVertical className="h-5 w-5 text-muted-foreground" />
+            </div>
             <CardTitle className="text-xl">{person.name}</CardTitle>
             <span className="text-sm text-muted-foreground">
               ({formatCurrency(totalVisible, currency)})
@@ -175,17 +255,33 @@ export function DebtTable({ person, language, currency, onAddDebt, onUpdateDebt,
           <>
             {/* Mobile Card Layout */}
             <div className="block md:hidden space-y-3">
-              {person.debts.map((debt) => (
-                <Card key={debt.id} className={`p-4 ${debt.isHidden ? 'opacity-60 bg-muted' : ''}`}>
+              {person.debts.map((debt, index) => (
+                <Card 
+                  key={debt.id} 
+                  className={`p-4 transition-all duration-200 ${debt.isHidden ? 'opacity-60 bg-muted' : ''} ${dragOverIndex === index ? 'border-primary' : ''}`}
+                  onDragOver={(e) => handleDebtDragOver(e, index)}
+                  onDragLeave={handleDebtDragLeave}
+                  onDrop={(e) => handleDebtDrop(e, index)}
+                >
                   <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1">
-                      <h4 className="font-medium text-sm">{debt.description}</h4>
-                      <p className={`text-lg font-bold ${debt.isHidden ? 'line-through text-muted-foreground' : 'text-green-600'}`}>
-                        {formatCurrency(debt.value, currency)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(debt.createdAt).toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US')}
-                      </p>
+                    <div className="flex items-start gap-2">
+                      <div
+                        draggable
+                        onDragStart={(e) => handleDebtDragStart(e, index)}
+                        onDragEnd={handleDebtDragEnd}
+                        className="cursor-move"
+                      >
+                        <GripVertical className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm">{debt.description}</h4>
+                        <p className={`text-lg font-bold ${debt.isHidden ? 'line-through text-muted-foreground' : 'text-green-600'}`}>
+                          {formatCurrency(debt.value, currency)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(debt.createdAt).toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US')}
+                        </p>
+                      </div>
                     </div>
                   </div>
                   <div className="flex gap-1 flex-wrap">
@@ -253,10 +349,23 @@ export function DebtTable({ person, language, currency, onAddDebt, onUpdateDebt,
                   </tr>
                 </thead>
                 <tbody>
-                  {person.debts.map((debt) => (
-                    <tr key={debt.id} className={`border-b hover:bg-muted/50 ${debt.isHidden ? 'opacity-60' : ''}`}>
+                  {person.debts.map((debt, index) => (
+                    <tr 
+                      key={debt.id} 
+                      className={`border-b hover:bg-muted/50 transition-all duration-200 ${debt.isHidden ? 'opacity-60' : ''} ${dragOverIndex === index ? 'bg-primary/10' : ''}`}
+                      onDragOver={(e) => handleDebtDragOver(e, index)}
+                      onDragLeave={handleDebtDragLeave}
+                      onDrop={(e) => handleDebtDrop(e, index)}
+                    >
                       <td className="p-2">
-                        <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
+                        <div
+                          draggable
+                          onDragStart={(e) => handleDebtDragStart(e, index)}
+                          onDragEnd={handleDebtDragEnd}
+                          className="cursor-move"
+                        >
+                          <GripVertical className="h-4 w-4 text-muted-foreground" />
+                        </div>
                       </td>
                       <td className="p-2 font-medium">{debt.description}</td>
                       <td className={`p-2 font-bold ${debt.isHidden ? 'line-through text-muted-foreground' : 'text-green-600'}`}>
