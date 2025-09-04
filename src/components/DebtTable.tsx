@@ -129,9 +129,14 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
 
   // Debt drag handlers
   const handleDebtDragStart = (e: React.DragEvent, debtIndex: number) => {
-    e.dataTransfer.setData('text/plain', `debt-${person.id}-${debtIndex}`);
+    const dragData = `debt|${person.id}|${debtIndex}`;
+    e.dataTransfer.setData('text/plain', dragData);
     e.dataTransfer.effectAllowed = 'move';
     e.stopPropagation(); // Prevent person drag when dragging debt
+  };
+
+  const handleDebtDragEnd = () => {
+    setDragOverIndex(null);
   };
 
   const handleDebtDragOver = (e: React.DragEvent, debtIndex: number) => {
@@ -149,8 +154,8 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
     e.preventDefault();
     e.stopPropagation();
     const dragData = e.dataTransfer.getData('text/plain');
-    if (dragData.startsWith('debt-')) {
-      const [, dragPersonId, fromIndexStr] = dragData.split('-');
+    if (dragData.startsWith('debt|')) {
+      const [, dragPersonId, fromIndexStr] = dragData.split('|');
       const fromIndex = parseInt(fromIndexStr);
       if (dragPersonId === person.id && fromIndex !== toIndex) {
         onReorderDebts(person.id, fromIndex, toIndex);
@@ -263,6 +268,7 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
                       <div
                         draggable
                         onDragStart={(e) => handleDebtDragStart(e, index)}
+                        onDragEnd={handleDebtDragEnd}
                         className="cursor-move"
                       >
                         <GripVertical className="h-4 w-4 text-muted-foreground mt-0.5" />
@@ -355,6 +361,7 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
                         <div
                           draggable
                           onDragStart={(e) => handleDebtDragStart(e, index)}
+                          onDragEnd={handleDebtDragEnd}
                           className="cursor-move"
                         >
                           <GripVertical className="h-4 w-4 text-muted-foreground" />
