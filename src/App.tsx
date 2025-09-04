@@ -150,10 +150,11 @@ function App() {
 
           {/* People and Debts */}
           <div className="space-y-6">
-            {state.people.map((person) => (
+            {state.people.map((person, index) => (
               <DebtTable
                 key={person.id}
                 person={person}
+                personIndex={index}
                 language={state.language}
                 currency={state.currency}
                 onAddDebt={actions.addDebt}
@@ -162,6 +163,8 @@ function App() {
                 onDuplicateDebt={actions.duplicateDebt}
                 onToggleHidden={actions.toggleDebtHidden}
                 onRemovePerson={actions.removePerson}
+                onReorderDebts={actions.reorderDebts}
+                onReorderPeople={actions.reorderPeople}
               />
             ))}
           </div>
