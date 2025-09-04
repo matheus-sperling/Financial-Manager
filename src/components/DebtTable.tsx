@@ -197,7 +197,7 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
     // Try to prevent scrolling, but don't fail if it's passive
     try {
       e.preventDefault();
-    } catch (error) {
+    } catch {
       // Ignore passive event listener errors
     }
   };
@@ -229,7 +229,7 @@ export function DebtTable({ person, personIndex, language, currency, onAddDebt, 
     // Try to prevent scrolling, but don't fail if it's passive
     try {
       e.preventDefault();
-    } catch (error) {
+    } catch {
       // Ignore passive event listener errors
     }
   };
