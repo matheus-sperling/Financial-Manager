@@ -40,5 +40,3 @@ pids
 *.tmp
 *.temp
 
-# Documentation for AI assistants
-CLAUDE.md
