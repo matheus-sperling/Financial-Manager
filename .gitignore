@@ -40,3 +40,7 @@ pids
 *.tmp
 *.temp
 
+# MCP configuration files
+mcp.json
+*.mcp.json
+
