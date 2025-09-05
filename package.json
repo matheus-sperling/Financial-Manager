@@ -5,14 +5,16 @@
   "main": "dist/index.html",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "start": "npm run dev",
-    "lint": "eslint . --max-warnings 1",
-    "lint:fix": "eslint . --max-warnings 0 --fix",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next build",
+    "preview": "next start",
+    "lint": "next lint --max-warnings 1",
+    "lint:fix": "next lint --fix --max-warnings 0",
+    "type-check": "tsc --noEmit",
     "test": "echo 'No tests configured'",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build && touch dist/.nojekyll",
     "deploy": "gh-pages -d dist"
   },
   "keywords": [
@@ -20,50 +22,51 @@
     "finance",
     "personal-finance",
     "money-management",
-    "vanilla-js",
-    "html",
-    "css",
-    "javascript",
+    "react",
+    "nextjs",
+    "typescript",
+    "tailwindcss",
+    "shadcn-ui",
+    "github-pages",
+    "static-export",
     "local-storage",
-    "modular-javascript"
+    "responsive-design",
+    "mobile-first",
+    "internationalization",
+    "dark-mode"
   ],
   "author": "Matheus Sperling",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/debt-manager.git"
+    "url": "https://github.com/matheus-sperling/Financial-Manager.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/debt-manager/issues"
+    "url": "https://github.com/matheus-sperling/Financial-Manager/issues"
   },
   "homepage": "https://matheus-sperling.github.io/Financial-Manager/",
   "devDependencies": {
-    "@eslint/js": "^9.34.0",
     "@types/node": "^24.3.0",
-    "@typescript-eslint/eslint-plugin": "^8.42.0",
-    "@typescript-eslint/parser": "^8.42.0",
-    "@vitejs/plugin-react": "^5.0.2",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.4.21",
     "eslint": "^8.0.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
+    "eslint-config-next": "^15.1.6",
     "gh-pages": "^6.1.1",
-    "globals": "^16.3.0",
+    "next": "^15.1.6",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.9.2",
-    "vite": "^7.1.4"
+    "typescript": "^5.9.2"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-slot": "^1.2.3",
-    "@types/react": "^19.1.12",
-    "@types/react-dom": "^19.1.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.542.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7"
   }
 }

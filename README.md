@@ -7,19 +7,21 @@ A simple and intuitive web application to manage your personal debts with other 
 - **People Management**: Add and remove people you owe money to
 - **Debt Control**: Add, edit, remove and duplicate debts easily
 - **Hidden Debts**: Mark debts as hidden to exclude from total calculation (useful for paid debts or disputes)
-- **Drag & Drop**: Reorder people and debts with drag & drop functionality
+- **Select-and-Move Reordering**: Mobile-friendly reordering system that works on all devices
 - **Financial Summary**: View total amounts, registered people, and hidden debt values
 - **Auto Save**: All data is automatically saved to localStorage
-- **Dark Mode**: Toggle between light and dark themes
-- **Responsive Design**: Optimized interface for desktop and mobile
+- **Currency Support**: Toggle between USD ($) and BRL (R$) with automatic formatting
+- **Internationalization**: English/Portuguese with browser language detection and flag toggles
+- **Dark Mode**: Toggle between light and dark themes with automatic persistence
+- **Responsive Design**: Mobile-first approach optimized for all device sizes
 - **Safety Confirmations**: Confirmation modal for destructive actions
 
 ## 🚀 Getting Started
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/debt-manager.git
-   cd debt-manager
+   git clone https://github.com/matheus-sperling/Financial-Manager.git
+   cd Financial-Manager
    ```
 
 2. **Install dependencies**:
@@ -32,15 +34,16 @@ A simple and intuitive web application to manage your personal debts with other 
    npm run dev
    ```
 
-4. **Open your browser** to `http://localhost:5173`
+4. **Open your browser** to `http://localhost:3000`
 
 5. **Start using**:
    - Click "Add New Person" to register someone
    - Fill in the debt description and amount
    - Use action buttons to edit, duplicate or remove debts
-   - Drag the ⋮⋮ icon to reorder people or debts
-   - Click the moon/sun icon to toggle dark mode
-   - Toggle language with the flag button
+   - Use the select-and-move system to reorder people or debts
+   - Click the moon/sun icon to toggle between light and dark themes
+   - Toggle language with the flag button (EN/PT)
+   - Switch currency with the dollar/real button (USD/BRL)
 
 ## 🚢 Deployment to GitHub Pages
 
@@ -54,31 +57,37 @@ This project is pre-configured for easy deployment to GitHub Pages.
 
 2.  **For Forks**: If you have forked this repository, you need to update two files before deploying:
     *   In `package.json`, change the `homepage` value to your GitHub Pages URL (e.g., `https://<your-username>.github.io/<your-repo-name>/`).
-    *   In `vite.config.ts`, change the `base` value to your repository name (e.g., `base: '/<your-repo-name>/'`).
+    *   In `next.config.js`, change the `basePath` and `assetPrefix` values to your repository name (e.g., `basePath: '/<your-repo-name>', assetPrefix: '/<your-repo-name>/'`).
+
+    **Current configuration**: This repository is configured for `matheus-sperling/Financial-Manager` and deploys to `https://matheus-sperling.github.io/Financial-Manager/`
 
 ## 📁 Project Structure
 
 ```
-debt-manager/
+Financial-Manager/
+├── app/
+│   ├── layout.tsx              # Next.js root layout with metadata
+│   ├── page.tsx                # Next.js page component (entry point)
+│   └── globals.css             # Global styles
 ├── src/
 │   ├── components/
 │   │   ├── ui/                 # shadcn/ui base components
+│   │   ├── AppContent.tsx      # Main application logic
 │   │   ├── DebtSummary.tsx     # Financial summary cards
-│   │   └── DebtTable.tsx       # Responsive debt management
+│   │   ├── DebtTable.tsx       # Responsive debt management
+│   │   └── ReorderButton.tsx   # Mobile-friendly reordering
 │   ├── hooks/
-│   │   └── useDebtManager.ts   # State management hook
+│   │   ├── useDebtManager.ts   # State management hook
+│   │   └── useClientStorage.ts # SSR-compatible localStorage
 │   ├── lib/
 │   │   └── utils.ts            # Utility functions
 │   ├── types/
 │   │   └── debt.ts             # TypeScript definitions
-│   ├── App.tsx                 # Main application
-│   ├── main.tsx                # Entry point
-│   └── index.css               # Global styles
-├── index.html                  # HTML template
+│   └── index.css               # Tailwind imports and styles
+├── next.config.js              # Next.js configuration
 ├── package.json                # Dependencies and scripts
 ├── tsconfig.json              # TypeScript configuration
 ├── tailwind.config.js         # Tailwind CSS configuration
-├── vite.config.ts             # Vite build configuration
 └── README.md                  # Documentation
 ```
 
@@ -92,9 +101,9 @@ debt-manager/
 - **Hide**: Mark as hidden to keep in history but exclude from calculations
 
 ### Organization
-- **Drag & Drop**: Use the ⋮⋮ icon to drag and reorder
-- **People**: Reorder the people list
-- **Debts**: Reorder debts within each person
+- **Select-and-Move**: Mobile-friendly reordering system
+- **People**: Select a person and move up/down in the list
+- **Debts**: Select a debt and move up/down within each person
 
 ### Financial Summary
 - **Total to Pay**: Sum of all visible debts
@@ -110,13 +119,13 @@ debt-manager/
 ## 🔧 Technologies Used
 
 - **React 19**: Latest React with modern hooks and concurrent features
+- **Next.js 15**: App Router with static export for GitHub Pages
 - **TypeScript**: Type-safe development with excellent developer experience
-- **Vite**: Lightning-fast build tool with Hot Module Replacement
 - **Tailwind CSS**: Utility-first CSS framework for rapid styling
 - **shadcn/ui**: Beautiful, accessible, and customizable component library
 - **Lucide React**: Modern icon library with consistent design
 - **ESLint**: Code linting and quality enforcement
-- **LocalStorage**: Client-side data persistence
+- **LocalStorage**: Client-side data persistence with SSR compatibility
 
 ## 📱 Responsive Design
 
@@ -147,7 +156,7 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ## 🐛 Report Issues
 
-Found a bug or have a suggestion? [Open an issue](https://github.com/yourusername/debt-manager/issues)
+Found a bug or have a suggestion? [Open an issue](https://github.com/matheus-sperling/Financial-Manager/issues)
 
 
 **Developed with ❤️ to help with personal financial control**

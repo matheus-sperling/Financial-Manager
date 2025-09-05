@@ -5,18 +5,26 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { formatCurrency } from '@/lib/utils';
 import { Person, Debt } from '@/types/debt';
-import { Edit2, Copy, Trash2, Eye, EyeOff, Plus, GripVertical } from 'lucide-react';
+import { Edit2, Copy, Trash2, Eye, EyeOff, Plus } from 'lucide-react';
+import { ReorderButton } from './ReorderButton';
 
 interface DebtTableProps {
   person: Person;
+  personIndex: number;
   language: 'en' | 'pt';
   currency: 'BRL' | 'USD';
+  selectedPersonIndex: number | null;
+  totalPeople: number;
+  onSelectPerson: (index: number | null) => void;
+  onReorderPerson: (fromIndex: number, toIndex: number) => void;
   onAddDebt: (personId: string, description: string, value: number) => void;
   onUpdateDebt: (personId: string, debtId: string, updates: Partial<Debt>) => void;
   onRemoveDebt: (personId: string, debtId: string) => void;
   onDuplicateDebt: (personId: string, debtId: string) => void;
   onToggleHidden: (personId: string, debtId: string) => void;
   onRemovePerson: (personId: string) => void;
+  onUpdatePersonName: (personId: string, name: string) => void;
+  onReorderDebts: (personId: string, fromIndex: number, toIndex: number) => void;
 }
 
 const translations = {
@@ -41,7 +49,9 @@ const translations = {
     addNewDebt: 'Add New Debt',
     enterDescription: 'Enter description',
     enterValue: 'Enter value',
-    save: 'Save'
+    save: 'Save',
+    editPersonName: 'Edit Name',
+    enterPersonName: 'Enter person name'
   },
   pt: {
     description: 'Descrição',
@@ -64,16 +74,38 @@ const translations = {
     addNewDebt: 'Adicionar Nova Dívida',
     enterDescription: 'Digite a descrição',
     enterValue: 'Digite o valor',
-    save: 'Salvar'
+    save: 'Salvar',
+    editPersonName: 'Editar Nome',
+    enterPersonName: 'Digite o nome da pessoa'
   }
 };
 
-export function DebtTable({ person, language, currency, onAddDebt, onUpdateDebt, onRemoveDebt, onDuplicateDebt, onToggleHidden, onRemovePerson }: DebtTableProps) {
+export function DebtTable({ 
+  person, 
+  personIndex, 
+  language, 
+  currency, 
+  selectedPersonIndex,
+  totalPeople,
+  onSelectPerson,
+  onReorderPerson,
+  onAddDebt, 
+  onUpdateDebt, 
+  onRemoveDebt, 
+  onDuplicateDebt, 
+  onToggleHidden, 
+  onRemovePerson, 
+  onUpdatePersonName,
+  onReorderDebts
+}: DebtTableProps) {
   const t = translations[language];
   const [newDebt, setNewDebt] = useState({ description: '', value: '' });
   const [editingDebt, setEditingDebt] = useState<Debt | null>(null);
+  const [editingPersonName, setEditingPersonName] = useState('');
+  const [selectedDebtIndex, setSelectedDebtIndex] = useState<number | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isEditPersonNameOpen, setIsEditPersonNameOpen] = useState(false);
 
   const handleAddDebt = () => {
     if (newDebt.description && newDebt.value) {
@@ -95,6 +127,19 @@ export function DebtTable({ person, language, currency, onAddDebt, onUpdateDebt,
     }
   };
 
+  const handleEditPersonName = () => {
+    if (editingPersonName.trim()) {
+      onUpdatePersonName(person.id, editingPersonName.trim());
+      setEditingPersonName('');
+      setIsEditPersonNameOpen(false);
+    }
+  };
+
+  const handleReorderDebt = (fromIndex: number, toIndex: number) => {
+    onReorderDebts(person.id, fromIndex, toIndex);
+    setSelectedDebtIndex(null);
+  };
+
   const visibleDebts = person.debts.filter(d => !d.isHidden);
   const totalVisible = visibleDebts.reduce((sum, debt) => sum + debt.value, 0);
 
@@ -103,8 +148,31 @@ export function DebtTable({ person, language, currency, onAddDebt, onUpdateDebt,
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-2">
-            <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
+            {totalPeople > 1 && (
+              <ReorderButton
+                isSelected={selectedPersonIndex === personIndex}
+                canMoveUp={personIndex > 0}
+                canMoveDown={personIndex < totalPeople - 1}
+                onSelect={() => onSelectPerson(selectedPersonIndex === personIndex ? null : personIndex)}
+                onMoveUp={() => onReorderPerson(personIndex, personIndex - 1)}
+                onMoveDown={() => onReorderPerson(personIndex, personIndex + 1)}
+                onCancel={() => onSelectPerson(null)}
+                language={language}
+              />
+            )}
             <CardTitle className="text-xl">{person.name}</CardTitle>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                setEditingPersonName(person.name);
+                setIsEditPersonNameOpen(true);
+              }}
+              className="h-6 w-6 p-0"
+              title={t.editPersonName}
+            >
+              <Edit2 className="h-4 w-4" />
+            </Button>
             <span className="text-sm text-muted-foreground">
               ({formatCurrency(totalVisible, currency)})
             </span>
@@ -175,17 +243,32 @@ export function DebtTable({ person, language, currency, onAddDebt, onUpdateDebt,
           <>
             {/* Mobile Card Layout */}
             <div className="block md:hidden space-y-3">
-              {person.debts.map((debt) => (
+              {person.debts.map((debt, debtIndex) => (
                 <Card key={debt.id} className={`p-4 ${debt.isHidden ? 'opacity-60 bg-muted' : ''}`}>
                   <div className="flex justify-between items-start mb-2">
-                    <div className="flex-1">
-                      <h4 className="font-medium text-sm">{debt.description}</h4>
-                      <p className={`text-lg font-bold ${debt.isHidden ? 'line-through text-muted-foreground' : 'text-green-600'}`}>
-                        {formatCurrency(debt.value, currency)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(debt.createdAt).toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US')}
-                      </p>
+                    <div className="flex items-start gap-2">
+                      {person.debts.length > 1 && (
+                        <ReorderButton
+                          isSelected={selectedDebtIndex === debtIndex}
+                          canMoveUp={debtIndex > 0}
+                          canMoveDown={debtIndex < person.debts.length - 1}
+                          onSelect={() => setSelectedDebtIndex(selectedDebtIndex === debtIndex ? null : debtIndex)}
+                          onMoveUp={() => handleReorderDebt(debtIndex, debtIndex - 1)}
+                          onMoveDown={() => handleReorderDebt(debtIndex, debtIndex + 1)}
+                          onCancel={() => setSelectedDebtIndex(null)}
+                          language={language}
+                          size="sm"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm">{debt.description}</h4>
+                        <p className={`text-lg font-bold ${debt.isHidden ? 'line-through text-muted-foreground' : 'text-green-600'}`}>
+                          {formatCurrency(debt.value, currency)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(debt.createdAt).toLocaleDateString(language === 'pt' ? 'pt-BR' : 'en-US')}
+                        </p>
+                      </div>
                     </div>
                   </div>
                   <div className="flex gap-1 flex-wrap">
@@ -253,10 +336,22 @@ export function DebtTable({ person, language, currency, onAddDebt, onUpdateDebt,
                   </tr>
                 </thead>
                 <tbody>
-                  {person.debts.map((debt) => (
+                  {person.debts.map((debt, debtIndex) => (
                     <tr key={debt.id} className={`border-b hover:bg-muted/50 ${debt.isHidden ? 'opacity-60' : ''}`}>
                       <td className="p-2">
-                        <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
+                        {person.debts.length > 1 && (
+                          <ReorderButton
+                            isSelected={selectedDebtIndex === debtIndex}
+                            canMoveUp={debtIndex > 0}
+                            canMoveDown={debtIndex < person.debts.length - 1}
+                            onSelect={() => setSelectedDebtIndex(selectedDebtIndex === debtIndex ? null : debtIndex)}
+                            onMoveUp={() => handleReorderDebt(debtIndex, debtIndex - 1)}
+                            onMoveDown={() => handleReorderDebt(debtIndex, debtIndex + 1)}
+                            onCancel={() => setSelectedDebtIndex(null)}
+                            language={language}
+                            size="sm"
+                          />
+                        )}
                       </td>
                       <td className="p-2 font-medium">{debt.description}</td>
                       <td className={`p-2 font-bold ${debt.isHidden ? 'line-through text-muted-foreground' : 'text-green-600'}`}>
@@ -321,7 +416,7 @@ export function DebtTable({ person, language, currency, onAddDebt, onUpdateDebt,
         )}
       </CardContent>
 
-      {/* Edit Dialog */}
+      {/* Edit Debt Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -346,6 +441,33 @@ export function DebtTable({ person, language, currency, onAddDebt, onUpdateDebt,
           )}
           <DialogFooter>
             <Button onClick={handleEditDebt}>{t.save}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Person Name Dialog */}
+      <Dialog open={isEditPersonNameOpen} onOpenChange={setIsEditPersonNameOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t.editPersonName}</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <Input
+              placeholder={t.enterPersonName}
+              value={editingPersonName}
+              onChange={(e) => setEditingPersonName(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleEditPersonName()}
+              maxLength={50}
+              className="w-full"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditPersonNameOpen(false)}>
+              {t.cancel}
+            </Button>
+            <Button onClick={handleEditPersonName} disabled={!editingPersonName.trim()}>
+              {t.save}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

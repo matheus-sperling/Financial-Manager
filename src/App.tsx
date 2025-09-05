@@ -15,8 +15,8 @@ const translations = {
     clearAllDebts: 'Clear All Debts',
     howToUse: 'How to use:',
     instructions: 'Add people and their respective debts. Use "Edit" to modify description and amount. Use "Duplicate" to easily duplicate a debt. Check "Hidden" to exclude from total calculation.',
-    dragDrop: 'Drag and drop:',
-    dragInstructions: 'Use the grip icon to drag people or debts to reorder them.',
+    dragDrop: 'Reordering:',
+    dragInstructions: 'Click the grip icon to select an item, then use the arrow buttons to reorder people or debts.',
     addPersonTitle: 'Add New Person',
     enterPersonName: 'Enter person name',
     add: 'Add',
@@ -35,8 +35,8 @@ const translations = {
     clearAllDebts: 'Limpar Todas as Dívidas',
     howToUse: 'Como usar:',
     instructions: 'Adicione pessoas e suas respectivas dívidas. Use "Editar" para modificar descrição e valor. Use "Duplicar" para duplicar facilmente uma dívida. Marque "Ocultar" para excluir do cálculo total.',
-    dragDrop: 'Arrastar e soltar:',
-    dragInstructions: 'Use o ícone de arrastar para reordenar pessoas ou dívidas.',
+    dragDrop: 'Reordenação:',
+    dragInstructions: 'Clique no ícone de arrastar para selecionar um item, depois use as setas para reordenar pessoas ou dívidas.',
     addPersonTitle: 'Adicionar Nova Pessoa',
     enterPersonName: 'Digite o nome da pessoa',
     add: 'Adicionar',
@@ -54,6 +54,7 @@ function App() {
   const { state, actions, totals } = useDebtManager();
   const [newPersonName, setNewPersonName] = useState('');
   const [isAddPersonOpen, setIsAddPersonOpen] = useState(false);
+  const [selectedPersonIndex, setSelectedPersonIndex] = useState<number | null>(null);
   
   const t = translations[state.language];
 
@@ -76,11 +77,16 @@ function App() {
     actions.setCurrency(newCurrency);
   };
 
+  const handleReorderPerson = (fromIndex: number, toIndex: number) => {
+    actions.reorderPeople(fromIndex, toIndex);
+    setSelectedPersonIndex(null);
+  };
+
   return (
     <div className={`min-h-screen transition-colors duration-300 ${state.theme === 'dark' ? 'dark' : ''}`}>
       <div className="min-h-screen bg-gradient-to-br from-slate-100 via-primary/10 to-coral/10 dark:from-background dark:via-card dark:to-background">
         {/* Header */}
-        <header className="bg-gradient-to-r from-primary to-emerald dark:from-primary dark:to-emerald text-primary-foreground shadow-lg">
+        <header className="bg-gradient-to-r from-primary to-emerald dark:from-primary/70 dark:to-emerald/70 text-primary-foreground shadow-lg">
           <div className="container mx-auto px-4 py-6">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="text-center md:text-left">
@@ -94,7 +100,7 @@ function App() {
                   size="icon"
                   onClick={actions.toggleTheme}
                   title={t.changeTheme}
-                  className="bg-white/10 hover:bg-white/20 text-primary-foreground border-2 border-white/30 hover:border-white/50"
+                  className="bg-white/10 hover:bg-white/20 dark:bg-black/20 dark:hover:bg-black/30 text-primary-foreground border-2 border-white/30 dark:border-white/20 hover:border-white/50 dark:hover:border-white/30"
                 >
                   {state.theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
                 </Button>
@@ -105,7 +111,7 @@ function App() {
                   size="icon"
                   onClick={actions.toggleLanguage}
                   title={t.changeLanguage}
-                  className="bg-white/10 hover:bg-white/20 text-primary-foreground border-2 border-white/30 hover:border-white/50"
+                  className="bg-white/10 hover:bg-white/20 dark:bg-black/20 dark:hover:bg-black/30 text-primary-foreground border-2 border-white/30 dark:border-white/20 hover:border-white/50 dark:hover:border-white/30"
                 >
                   {state.language === 'en' ? '🇺🇸' : '🇧🇷'}
                 </Button>
@@ -116,7 +122,7 @@ function App() {
                   size="icon"
                   onClick={handleToggleCurrency}
                   title={t.changeCurrency}
-                  className="bg-white/10 hover:bg-white/20 text-primary-foreground border-2 border-white/30 hover:border-white/50"
+                  className="bg-white/10 hover:bg-white/20 dark:bg-black/20 dark:hover:bg-black/30 text-primary-foreground border-2 border-white/30 dark:border-white/20 hover:border-white/50 dark:hover:border-white/30"
                 >
                   {state.currency === 'USD' ? '$' : 'R$'}
                 </Button>
@@ -150,18 +156,25 @@ function App() {
 
           {/* People and Debts */}
           <div className="space-y-6">
-            {state.people.map((person) => (
+            {state.people.map((person, index) => (
               <DebtTable
                 key={person.id}
                 person={person}
+                personIndex={index}
                 language={state.language}
                 currency={state.currency}
+                selectedPersonIndex={selectedPersonIndex}
+                onSelectPerson={setSelectedPersonIndex}
+                onReorderPerson={handleReorderPerson}
                 onAddDebt={actions.addDebt}
                 onUpdateDebt={actions.updateDebt}
                 onRemoveDebt={actions.removeDebt}
                 onDuplicateDebt={actions.duplicateDebt}
                 onToggleHidden={actions.toggleDebtHidden}
                 onRemovePerson={actions.removePerson}
+                onUpdatePersonName={actions.updatePersonName}
+                onReorderDebts={actions.reorderDebts}
+                totalPeople={state.people.length}
               />
             ))}
           </div>

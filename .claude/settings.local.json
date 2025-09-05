@@ -54,7 +54,15 @@
       "Read(/D:\\Área de Trabalho\\Financial-Manager/**)",
       "Read(/D:\\Área de Trabalho\\Financial-Manager\\src/**)",
       "Read(/D:\\Área de Trabalho\\Financial-Manager\\src/**)",
-      "Read(/D:\\Área de Trabalho\\Financial-Manager\\src\\components/**)"
+      "Read(/D:\\Área de Trabalho\\Financial-Manager\\src\\components/**)",
+      "Read(/D:\\Área de Trabalho\\Financial-Manager/**)",
+      "Read(/D:\\Área de Trabalho\\Financial-Manager\\src/**)",
+      "Read(/D:\\Área de Trabalho\\Financial-Manager\\src\\hooks/**)",
+      "Read(/D:\\Área de Trabalho\\Financial-Manager\\src\\components/**)",
+      "Read(/D:\\Área de Trabalho\\Financial-Manager\\src/**)",
+      "Read(/D:\\Área de Trabalho\\Financial-Manager\\src/**)",
+      "Read(/D:\\Área de Trabalho\\Financial-Manager/**)",
+      "Read(/D:\\Área de Trabalho\\Financial-Manager/**)"
     ],
     "deny": [],
     "ask": []
