@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { DebtSummary } from '@/components/DebtSummary';
 import { DebtTable } from '@/components/DebtTable';
 import { useDebtManager } from '@/hooks/useDebtManager';
@@ -263,7 +263,9 @@ export function AppContent() {
                   </DialogHeader>
                   <p className="py-4 text-sm text-muted-foreground">{t.confirmClearDesc}</p>
                   <DialogFooter>
-                    <Button variant="outline">{t.cancel}</Button>
+                    <DialogClose asChild>
+                      <Button variant="outline">{t.cancel}</Button>
+                    </DialogClose>
                     <Button variant="destructive" onClick={actions.clearAllData}>
                       {t.confirm}
                     </Button>
