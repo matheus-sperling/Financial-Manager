@@ -17,6 +17,9 @@ npm run build
 # Code quality - ALWAYS run before committing (migrated to ESLint CLI)
 npm run lint
 
+# Type checking (available but not in automated workflow)
+npm run type-check
+
 # Tests (no tests configured)
 npm test
 ```
@@ -128,7 +131,7 @@ Always test these scenarios after making changes:
 
 ## Code Style & Patterns
 
-- **ESLint Configuration**: Migrated to ESLint CLI (from deprecated next lint) with TypeScript-aware rules
+- **ESLint Configuration**: Uses modern eslint.config.mjs with TypeScript-aware rules, migrated from deprecated next lint
 - **TypeScript**: Strict type checking enabled, interfaces defined in types/debt.ts
 - **Next.js Patterns**: App Router structure, server/client component separation
 - **State Management**: useDebtManager hook centralizes all application state and actions
