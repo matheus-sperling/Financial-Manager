@@ -16,6 +16,7 @@ interface DebtTableProps {
   selectedPersonIndex: number | null;
   totalPeople: number;
   onSelectPerson: (index: number | null) => void;
+  onReorderPerson: (fromIndex: number, toIndex: number) => void;
   onSwapPerson: (fromIndex: number, toIndex: number) => void;
   onAddDebt: (personId: string, description: string, value: number) => void;
   onUpdateDebt: (personId: string, debtId: string, updates: Partial<Debt>) => void;
@@ -88,6 +89,7 @@ export function DebtTable({
   selectedPersonIndex,
   totalPeople,
   onSelectPerson,
+  onReorderPerson,
   onSwapPerson,
   onAddDebt, 
   onUpdateDebt, 
