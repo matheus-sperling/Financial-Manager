@@ -16,7 +16,7 @@ interface DebtTableProps {
   selectedPersonIndex: number | null;
   totalPeople: number;
   onSelectPerson: (index: number | null) => void;
-  onReorderPerson: (fromIndex: number, toIndex: number) => void;
+  onSwapPerson: (fromIndex: number, toIndex: number) => void;
   onAddDebt: (personId: string, description: string, value: number) => void;
   onUpdateDebt: (personId: string, debtId: string, updates: Partial<Debt>) => void;
   onRemoveDebt: (personId: string, debtId: string) => void;
@@ -24,7 +24,7 @@ interface DebtTableProps {
   onToggleHidden: (personId: string, debtId: string) => void;
   onRemovePerson: (personId: string) => void;
   onUpdatePersonName: (personId: string, name: string) => void;
-  onReorderDebts: (personId: string, fromIndex: number, toIndex: number) => void;
+  onSwapDebts: (personId: string, fromIndex: number, toIndex: number) => void;
 }
 
 const translations = {
@@ -88,7 +88,7 @@ export function DebtTable({
   selectedPersonIndex,
   totalPeople,
   onSelectPerson,
-  onReorderPerson,
+  onSwapPerson,
   onAddDebt, 
   onUpdateDebt, 
   onRemoveDebt, 
@@ -96,7 +96,7 @@ export function DebtTable({
   onToggleHidden, 
   onRemovePerson, 
   onUpdatePersonName,
-  onReorderDebts
+  onSwapDebts
 }: DebtTableProps) {
   const t = translations[language];
   const [newDebt, setNewDebt] = useState({ description: '', value: '' });
@@ -135,8 +135,8 @@ export function DebtTable({
     }
   };
 
-  const handleReorderDebt = (fromIndex: number, toIndex: number) => {
-    onReorderDebts(person.id, fromIndex, toIndex);
+  const handleSwapDebt = (fromIndex: number, toIndex: number) => {
+    onSwapDebts(person.id, fromIndex, toIndex);
     setSelectedDebtIndex(null);
   };
 
@@ -151,11 +151,9 @@ export function DebtTable({
             {totalPeople > 1 && (
               <ReorderButton
                 isSelected={selectedPersonIndex === personIndex}
-                canMoveUp={personIndex > 0}
-                canMoveDown={personIndex < totalPeople - 1}
+                isValidSwapTarget={selectedPersonIndex !== null && selectedPersonIndex !== personIndex}
                 onSelect={() => onSelectPerson(selectedPersonIndex === personIndex ? null : personIndex)}
-                onMoveUp={() => onReorderPerson(personIndex, personIndex - 1)}
-                onMoveDown={() => onReorderPerson(personIndex, personIndex + 1)}
+                onSwap={selectedPersonIndex !== null ? () => onSwapPerson(selectedPersonIndex, personIndex) : undefined}
                 onCancel={() => onSelectPerson(null)}
                 language={language}
               />
@@ -250,11 +248,9 @@ export function DebtTable({
                       {person.debts.length > 1 && (
                         <ReorderButton
                           isSelected={selectedDebtIndex === debtIndex}
-                          canMoveUp={debtIndex > 0}
-                          canMoveDown={debtIndex < person.debts.length - 1}
+                          isValidSwapTarget={selectedDebtIndex !== null && selectedDebtIndex !== debtIndex}
                           onSelect={() => setSelectedDebtIndex(selectedDebtIndex === debtIndex ? null : debtIndex)}
-                          onMoveUp={() => handleReorderDebt(debtIndex, debtIndex - 1)}
-                          onMoveDown={() => handleReorderDebt(debtIndex, debtIndex + 1)}
+                          onSwap={selectedDebtIndex !== null ? () => handleSwapDebt(selectedDebtIndex, debtIndex) : undefined}
                           onCancel={() => setSelectedDebtIndex(null)}
                           language={language}
                           size="sm"
@@ -342,11 +338,9 @@ export function DebtTable({
                         {person.debts.length > 1 && (
                           <ReorderButton
                             isSelected={selectedDebtIndex === debtIndex}
-                            canMoveUp={debtIndex > 0}
-                            canMoveDown={debtIndex < person.debts.length - 1}
+                            isValidSwapTarget={selectedDebtIndex !== null && selectedDebtIndex !== debtIndex}
                             onSelect={() => setSelectedDebtIndex(selectedDebtIndex === debtIndex ? null : debtIndex)}
-                            onMoveUp={() => handleReorderDebt(debtIndex, debtIndex - 1)}
-                            onMoveDown={() => handleReorderDebt(debtIndex, debtIndex + 1)}
+                            onSwap={selectedDebtIndex !== null ? () => handleSwapDebt(selectedDebtIndex, debtIndex) : undefined}
                             onCancel={() => setSelectedDebtIndex(null)}
                             language={language}
                             size="sm"

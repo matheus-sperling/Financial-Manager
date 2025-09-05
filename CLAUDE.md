@@ -176,4 +176,4 @@ Always test these scenarios after making changes:
 - Never modify localStorage keys without migration strategy
 - Always test in both development and production builds
 
-Always update copilot-instructions.md, README.md, and this file (CLAUDE.md) with any significant changes to architecture, commands, or deployment process.
+## Always update copilot-instructions.md, README.md, and this file (CLAUDE.md) with any significant changes to architecture, commands, or deployment process.

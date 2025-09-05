@@ -16,7 +16,7 @@ const translations = {
     howToUse: 'How to use:',
     instructions: 'Add people and their respective debts. Use "Edit" to modify description and amount. Use "Duplicate" to easily duplicate a debt. Check "Hidden" to exclude from total calculation.',
     dragDrop: 'Reordering:',
-    dragInstructions: 'Click the grip icon to select an item, then use the arrow buttons to reorder people or debts.',
+    dragInstructions: 'Click the grip icon to select an item, then click another item to swap their positions.',
     addPersonTitle: 'Add New Person',
     enterPersonName: 'Enter person name',
     add: 'Add',
@@ -37,7 +37,7 @@ const translations = {
     howToUse: 'Como usar:',
     instructions: 'Adicione pessoas e suas respectivas dívidas. Use "Editar" para modificar descrição e valor. Use "Duplicar" para duplicar facilmente uma dívida. Marque "Ocultar" para excluir do cálculo total.',
     dragDrop: 'Reordenação:',
-    dragInstructions: 'Clique no ícone de arrastar para selecionar um item, depois use as setas para reordenar pessoas ou dívidas.',
+    dragInstructions: 'Clique no ícone de arrastar para selecionar um item, depois clique em outro item para trocar suas posições.',
     addPersonTitle: 'Adicionar Nova Pessoa',
     enterPersonName: 'Digite o nome da pessoa',
     add: 'Adicionar',
@@ -79,6 +79,11 @@ export function AppContent() {
 
   const handleReorderPerson = (fromIndex: number, toIndex: number) => {
     actions.reorderPeople(fromIndex, toIndex);
+    setSelectedPersonIndex(null);
+  };
+
+  const handleSwapPerson = (fromIndex: number, toIndex: number) => {
+    actions.swapPeople(fromIndex, toIndex);
     setSelectedPersonIndex(null);
   };
 
@@ -180,6 +185,7 @@ export function AppContent() {
                 selectedPersonIndex={selectedPersonIndex}
                 onSelectPerson={setSelectedPersonIndex}
                 onReorderPerson={handleReorderPerson}
+                onSwapPerson={handleSwapPerson}
                 onAddDebt={actions.addDebt}
                 onUpdateDebt={actions.updateDebt}
                 onRemoveDebt={actions.removeDebt}
@@ -187,7 +193,7 @@ export function AppContent() {
                 onToggleHidden={actions.toggleDebtHidden}
                 onRemovePerson={actions.removePerson}
                 onUpdatePersonName={actions.updatePersonName}
-                onReorderDebts={actions.reorderDebts}
+                onSwapDebts={actions.swapDebts}
                 totalPeople={state.people.length}
               />
             ))}

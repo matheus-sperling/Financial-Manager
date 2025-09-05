@@ -165,6 +165,15 @@ export function useDebtManager() {
     });
   }, [setPeople]);
 
+  // Swap two people positions
+  const swapPeople = useCallback((fromIndex: number, toIndex: number) => {
+    setPeople(prev => {
+      const newPeople = [...prev];
+      [newPeople[fromIndex], newPeople[toIndex]] = [newPeople[toIndex], newPeople[fromIndex]];
+      return newPeople;
+    });
+  }, [setPeople]);
+
   // Reorder debts within a person
   const reorderDebts = useCallback((personId: string, fromIndex: number, toIndex: number) => {
     setPeople(prev => prev.map(p => {
@@ -172,6 +181,18 @@ export function useDebtManager() {
         const newDebts = [...p.debts];
         const [removed] = newDebts.splice(fromIndex, 1);
         newDebts.splice(toIndex, 0, removed);
+        return { ...p, debts: newDebts };
+      }
+      return p;
+    }));
+  }, [setPeople]);
+
+  // Swap two debts within a person
+  const swapDebts = useCallback((personId: string, fromIndex: number, toIndex: number) => {
+    setPeople(prev => prev.map(p => {
+      if (p.id === personId) {
+        const newDebts = [...p.debts];
+        [newDebts[fromIndex], newDebts[toIndex]] = [newDebts[toIndex], newDebts[fromIndex]];
         return { ...p, debts: newDebts };
       }
       return p;
@@ -206,7 +227,9 @@ export function useDebtManager() {
       duplicateDebt,
       toggleDebtHidden,
       reorderPeople,
+      swapPeople,
       reorderDebts,
+      swapDebts,
       toggleTheme,
       toggleLanguage,
       setCurrency: setCurrencyCallback,
