@@ -13,7 +13,7 @@
     "lint": "eslint --max-warnings 1 .",
     "lint:fix": "eslint --fix --max-warnings 0 .",
     "type-check": "tsc --noEmit",
-    "test": "echo 'No tests configured'",
+    "test": "echo 'No tests configured'"
   },
   "keywords": [
     "debt",
