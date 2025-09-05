@@ -111,7 +111,7 @@ export function DebtTable({
 
   const handleAddDebt = () => {
     if (newDebt.description && newDebt.value) {
-      const value = parseInt(newDebt.value) || 0;
+      const value = parseFloat(newDebt.value) || 0;
       onAddDebt(person.id, newDebt.description, value);
       setNewDebt({ description: '', value: '' });
       setIsAddDialogOpen(false);
@@ -197,14 +197,17 @@ export function DebtTable({
                   />
                   <Input
                     type="number"
-                    min="1"
-                    step="1"
+                    min="0.01"
+                    step="0.01"
                     placeholder={t.enterValue}
                     value={newDebt.value}
                     onChange={(e) => setNewDebt(prev => ({ ...prev, value: e.target.value }))}
                   />
                 </div>
                 <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                    {t.cancel}
+                  </Button>
                   <Button onClick={handleAddDebt}>{t.save}</Button>
                 </DialogFooter>
               </DialogContent>
@@ -427,15 +430,18 @@ export function DebtTable({
               />
               <Input
                 type="number"
-                min="1"
-                step="1"
+                min="0.01"
+                step="0.01"
                 placeholder={t.enterValue}
                 value={editingDebt.value.toString()}
-                onChange={(e) => setEditingDebt(prev => prev ? { ...prev, value: parseInt(e.target.value) || 0 } : null)}
+                onChange={(e) => setEditingDebt(prev => prev ? { ...prev, value: parseFloat(e.target.value) || 0 } : null)}
               />
             </div>
           )}
           <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              {t.cancel}
+            </Button>
             <Button onClick={handleEditDebt}>{t.save}</Button>
           </DialogFooter>
         </DialogContent>
