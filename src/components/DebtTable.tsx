@@ -23,8 +23,13 @@ interface DebtTableProps {
   onDuplicateDebt: (personId: string, debtId: string) => void;
   onToggleHidden: (personId: string, debtId: string) => void;
   onRemovePerson: (personId: string) => void;
+<<<<<<< HEAD
   onUpdatePersonName: (personId: string, name: string) => void;
   onReorderDebts: (personId: string, fromIndex: number, toIndex: number) => void;
+=======
+  onReorderDebts: (personId: string, fromIndex: number, toIndex: number) => void;
+  onReorderPeople: (fromIndex: number, toIndex: number) => void;
+>>>>>>> 59dc0d116b39c4fe7456462533bb46405cb135cd
 }
 
 const translations = {
@@ -80,6 +85,7 @@ const translations = {
   }
 };
 
+<<<<<<< HEAD
 export function DebtTable({ 
   person, 
   personIndex, 
@@ -98,6 +104,9 @@ export function DebtTable({
   onUpdatePersonName,
   onReorderDebts
 }: DebtTableProps) {
+=======
+export function DebtTable({ person, personIndex, language, currency, onAddDebt, onUpdateDebt, onRemoveDebt, onDuplicateDebt, onToggleHidden, onRemovePerson, onReorderDebts, onReorderPeople }: DebtTableProps) {
+>>>>>>> 59dc0d116b39c4fe7456462533bb46405cb135cd
   const t = translations[language];
   const [newDebt, setNewDebt] = useState({ description: '', value: '' });
   const [editingDebt, setEditingDebt] = useState<Debt | null>(null);
@@ -105,7 +114,27 @@ export function DebtTable({
   const [selectedDebtIndex, setSelectedDebtIndex] = useState<number | null>(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+<<<<<<< HEAD
   const [isEditPersonNameOpen, setIsEditPersonNameOpen] = useState(false);
+=======
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [isDraggingPerson, setIsDraggingPerson] = useState(false);
+  
+  // Touch drag state for mobile support
+  const [touchDragState, setTouchDragState] = useState<{
+    isDragging: boolean;
+    dragType: 'person' | 'debt' | null;
+    dragIndex: number | null;
+    startY: number;
+    currentY: number;
+  }>({
+    isDragging: false,
+    dragType: null,
+    dragIndex: null,
+    startY: 0,
+    currentY: 0
+  });
+>>>>>>> 59dc0d116b39c4fe7456462533bb46405cb135cd
 
   const handleAddDebt = () => {
     if (newDebt.description && newDebt.value) {
@@ -127,6 +156,7 @@ export function DebtTable({
     }
   };
 
+<<<<<<< HEAD
   const handleEditPersonName = () => {
     if (editingPersonName.trim()) {
       onUpdatePersonName(person.id, editingPersonName.trim());
@@ -138,16 +168,177 @@ export function DebtTable({
   const handleReorderDebt = (fromIndex: number, toIndex: number) => {
     onReorderDebts(person.id, fromIndex, toIndex);
     setSelectedDebtIndex(null);
+=======
+  // Person drag handlers
+  const handlePersonDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('text/plain', `person-${personIndex}`);
+    e.dataTransfer.effectAllowed = 'move';
+    setIsDraggingPerson(true);
+  };
+
+  const handlePersonDragEnd = () => {
+    setIsDraggingPerson(false);
+  };
+
+  const handlePersonDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handlePersonDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const dragData = e.dataTransfer.getData('text/plain');
+    if (dragData.startsWith('person-')) {
+      const fromIndex = parseInt(dragData.split('-')[1]);
+      if (fromIndex !== personIndex) {
+        onReorderPeople(fromIndex, personIndex);
+      }
+    }
+  };
+
+  // Debt drag handlers
+  const handleDebtDragStart = (e: React.DragEvent, debtIndex: number) => {
+    const dragData = `debt|${person.id}|${debtIndex}`;
+    e.dataTransfer.setData('text/plain', dragData);
+    e.dataTransfer.effectAllowed = 'move';
+    e.stopPropagation(); // Prevent person drag when dragging debt
+  };
+
+  const handleDebtDragEnd = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDebtDragOver = (e: React.DragEvent, debtIndex: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(debtIndex);
+  };
+
+  const handleDebtDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleDebtDrop = (e: React.DragEvent, toIndex: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const dragData = e.dataTransfer.getData('text/plain');
+    if (dragData.startsWith('debt|')) {
+      const [, dragPersonId, fromIndexStr] = dragData.split('|');
+      const fromIndex = parseInt(fromIndexStr);
+      if (dragPersonId === person.id && fromIndex !== toIndex) {
+        onReorderDebts(person.id, fromIndex, toIndex);
+      }
+    }
+    setDragOverIndex(null);
+  };
+
+  // Touch handlers for mobile drag-and-drop support
+  const handleTouchStart = (e: React.TouchEvent, type: 'person' | 'debt', index?: number) => {
+    const touch = e.touches[0];
+    setTouchDragState({
+      isDragging: true,
+      dragType: type,
+      dragIndex: type === 'debt' ? index! : personIndex,
+      startY: touch.clientY,
+      currentY: touch.clientY
+    });
+    
+    if (type === 'person') {
+      setIsDraggingPerson(true);
+    }
+    
+    // Try to prevent scrolling, but don't fail if it's passive
+    try {
+      e.preventDefault();
+    } catch {
+      // Ignore passive event listener errors
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchDragState.isDragging) return;
+    
+    const touch = e.touches[0];
+    setTouchDragState(prev => ({
+      ...prev,
+      currentY: touch.clientY
+    }));
+    
+    // Calculate which item we're hovering over based on touch position
+    const elements = document.querySelectorAll('[data-drag-target]');
+    let hoveredIndex = null;
+    
+    elements.forEach((element, index) => {
+      const rect = element.getBoundingClientRect();
+      if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        hoveredIndex = index;
+      }
+    });
+    
+    if (hoveredIndex !== null && touchDragState.dragType === 'debt') {
+      setDragOverIndex(hoveredIndex);
+    }
+    
+    // Try to prevent scrolling, but don't fail if it's passive
+    try {
+      e.preventDefault();
+    } catch {
+      // Ignore passive event listener errors
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchDragState.isDragging) return;
+    
+    const touch = e.changedTouches[0];
+    const elements = document.querySelectorAll('[data-drag-target]');
+    let dropIndex = null;
+    
+    // Find the element we're dropping on
+    elements.forEach((element, index) => {
+      const rect = element.getBoundingClientRect();
+      if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        dropIndex = index;
+      }
+    });
+    
+    // Perform the reorder operation
+    if (dropIndex !== null && touchDragState.dragIndex !== null) {
+      if (touchDragState.dragType === 'debt' && touchDragState.dragIndex !== dropIndex) {
+        onReorderDebts(person.id, touchDragState.dragIndex, dropIndex);
+      } else if (touchDragState.dragType === 'person' && touchDragState.dragIndex !== dropIndex) {
+        onReorderPeople(touchDragState.dragIndex, dropIndex);
+      }
+    }
+    
+    // Reset state
+    setTouchDragState({
+      isDragging: false,
+      dragType: null,
+      dragIndex: null,
+      startY: 0,
+      currentY: 0
+    });
+    setIsDraggingPerson(false);
+    setDragOverIndex(null);
+>>>>>>> 59dc0d116b39c4fe7456462533bb46405cb135cd
   };
 
   const visibleDebts = person.debts.filter(d => !d.isHidden);
   const totalVisible = visibleDebts.reduce((sum, debt) => sum + debt.value, 0);
 
   return (
-    <Card className="w-full mb-6">
+    <Card 
+      className={`w-full mb-6 transition-all duration-200 ${isDraggingPerson || touchDragState.isDragging ? 'opacity-50' : ''}`}
+      onDragOver={handlePersonDragOver}
+      onDrop={handlePersonDrop}
+      data-drag-target
+    >
       <CardHeader>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="flex items-center gap-2">
+<<<<<<< HEAD
             {totalPeople > 1 && (
               <ReorderButton
                 isSelected={selectedPersonIndex === personIndex}
@@ -160,6 +351,20 @@ export function DebtTable({
                 language={language}
               />
             )}
+=======
+            <div
+              draggable
+              onDragStart={handlePersonDragStart}
+              onDragEnd={handlePersonDragEnd}
+              onTouchStart={(e) => handleTouchStart(e, 'person')}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className="cursor-move select-none"
+              style={{ touchAction: 'none' }}
+            >
+              <GripVertical className="h-5 w-5 text-muted-foreground" />
+            </div>
+>>>>>>> 59dc0d116b39c4fe7456462533bb46405cb135cd
             <CardTitle className="text-xl">{person.name}</CardTitle>
             <Button
               size="sm"
@@ -243,6 +448,7 @@ export function DebtTable({
           <>
             {/* Mobile Card Layout */}
             <div className="block md:hidden space-y-3">
+<<<<<<< HEAD
               {person.debts.map((debt, debtIndex) => (
                 <Card key={debt.id} className={`p-4 ${debt.isHidden ? 'opacity-60 bg-muted' : ''}`}>
                   <div className="flex justify-between items-start mb-2">
@@ -260,6 +466,31 @@ export function DebtTable({
                           size="sm"
                         />
                       )}
+=======
+              {person.debts.map((debt, index) => (
+                <Card 
+                  key={debt.id} 
+                  className={`p-4 transition-all duration-200 ${debt.isHidden ? 'opacity-60 bg-muted' : ''} ${dragOverIndex === index ? 'border-primary' : ''} ${touchDragState.isDragging && touchDragState.dragType === 'debt' && touchDragState.dragIndex === index ? 'opacity-50' : ''}`}
+                  onDragOver={(e) => handleDebtDragOver(e, index)}
+                  onDragLeave={handleDebtDragLeave}
+                  onDrop={(e) => handleDebtDrop(e, index)}
+                  data-drag-target
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-start gap-2">
+                      <div
+                        draggable
+                        onDragStart={(e) => handleDebtDragStart(e, index)}
+                        onDragEnd={handleDebtDragEnd}
+                        onTouchStart={(e) => handleTouchStart(e, 'debt', index)}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                        className="cursor-move select-none"
+                        style={{ touchAction: 'none' }}
+                      >
+                        <GripVertical className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      </div>
+>>>>>>> 59dc0d116b39c4fe7456462533bb46405cb135cd
                       <div className="flex-1">
                         <h4 className="font-medium text-sm">{debt.description}</h4>
                         <p className={`text-lg font-bold ${debt.isHidden ? 'line-through text-muted-foreground' : 'text-green-600'}`}>
@@ -336,6 +567,7 @@ export function DebtTable({
                   </tr>
                 </thead>
                 <tbody>
+<<<<<<< HEAD
                   {person.debts.map((debt, debtIndex) => (
                     <tr key={debt.id} className={`border-b hover:bg-muted/50 ${debt.isHidden ? 'opacity-60' : ''}`}>
                       <td className="p-2">
@@ -352,6 +584,30 @@ export function DebtTable({
                             size="sm"
                           />
                         )}
+=======
+                  {person.debts.map((debt, index) => (
+                    <tr 
+                      key={debt.id} 
+                      className={`border-b hover:bg-muted/50 transition-all duration-200 ${debt.isHidden ? 'opacity-60' : ''} ${dragOverIndex === index ? 'bg-primary/10' : ''} ${touchDragState.isDragging && touchDragState.dragType === 'debt' && touchDragState.dragIndex === index ? 'opacity-50' : ''}`}
+                      onDragOver={(e) => handleDebtDragOver(e, index)}
+                      onDragLeave={handleDebtDragLeave}
+                      onDrop={(e) => handleDebtDrop(e, index)}
+                      data-drag-target
+                    >
+                      <td className="p-2">
+                        <div
+                          draggable
+                          onDragStart={(e) => handleDebtDragStart(e, index)}
+                          onDragEnd={handleDebtDragEnd}
+                          onTouchStart={(e) => handleTouchStart(e, 'debt', index)}
+                          onTouchMove={handleTouchMove}
+                          onTouchEnd={handleTouchEnd}
+                          className="cursor-move select-none"
+                          style={{ touchAction: 'none' }}
+                        >
+                          <GripVertical className="h-4 w-4 text-muted-foreground" />
+                        </div>
+>>>>>>> 59dc0d116b39c4fe7456462533bb46405cb135cd
                       </td>
                       <td className="p-2 font-medium">{debt.description}</td>
                       <td className={`p-2 font-bold ${debt.isHidden ? 'line-through text-muted-foreground' : 'text-green-600'}`}>

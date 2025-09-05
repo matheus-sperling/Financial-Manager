@@ -178,6 +178,35 @@ export function useDebtManager() {
     }));
   }, [setPeople]);
 
+  // Reordering
+  const reorderPeople = useCallback((fromIndex: number, toIndex: number) => {
+    setState(prev => {
+      const people = [...prev.people];
+      const [moved] = people.splice(fromIndex, 1);
+      people.splice(toIndex, 0, moved);
+      return { ...prev, people };
+    });
+  }, []);
+
+  const reorderDebts = useCallback((personId: string, fromIndex: number, toIndex: number) => {
+    setState(prev => ({
+      ...prev,
+      people: prev.people.map(p =>
+        p.id === personId
+          ? {
+              ...p,
+              debts: (() => {
+                const debts = [...p.debts];
+                const [moved] = debts.splice(fromIndex, 1);
+                debts.splice(toIndex, 0, moved);
+                return debts;
+              })()
+            }
+          : p
+      ),
+    }));
+  }, []);
+
   // Clear all data
   const clearAllData = useCallback(() => {
     setPeople([]);
