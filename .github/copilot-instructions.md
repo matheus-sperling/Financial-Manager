@@ -14,8 +14,20 @@ npm run dev
 # Build for production (Next.js static export)
 npm run build
 
+# Start production server (after build)
+npm run start
+
+# Alternative build command (same as build)
+npm run export
+
+# Preview production build (same as start)
+npm run preview
+
 # Code quality - ALWAYS run before committing (migrated to ESLint CLI)
 npm run lint
+
+# Fix linting issues automatically
+npm run lint:fix
 
 # Type checking (available but not in automated workflow)
 npm run type-check
@@ -182,6 +194,8 @@ Always test these scenarios after making changes:
 - Client-side hydration ensures data loads correctly after Next.js static generation
 - Never modify localStorage keys without migration strategy
 - Always test in both development and production builds
+
+## Always update copilot-instructions.md, README.md, and this file (CLAUDE.md) with any significant changes to architecture, commands, or deployment process.
 
 ## GitHub Actions Deployment
 

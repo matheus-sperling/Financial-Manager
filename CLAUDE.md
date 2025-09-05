@@ -14,8 +14,20 @@ npm run dev
 # Build for production (Next.js static export)
 npm run build
 
+# Start production server (after build)
+npm run start
+
+# Alternative build command (same as build)
+npm run export
+
+# Preview production build (same as start)
+npm run preview
+
 # Code quality - ALWAYS run before committing (migrated to ESLint CLI)
 npm run lint
+
+# Fix linting issues automatically
+npm run lint:fix
 
 # Type checking (available but not in automated workflow)
 npm run type-check
