@@ -14,7 +14,7 @@ npm run dev
 # Build for production (Next.js static export)
 npm run build
 
-# Code quality - ALWAYS run before committing
+# Code quality - ALWAYS run before committing (migrated to ESLint CLI)
 npm run lint
 
 # Tests (no tests configured)
@@ -35,6 +35,7 @@ This command builds the application using Next.js static export and pushes the `
 **Current Configuration**: This repository is configured for `matheus-sperling/Financial-Manager` and deploys to `https://matheus-sperling.github.io/Financial-Manager/`
 
 **Forking**: If you fork this repository, you must update two files for deployment to work correctly:
+
 1.  `package.json`: Update the `homepage` field to your new GitHub Pages URL.
 2.  `next.config.js`: Update the `basePath` and `assetPrefix` fields to your new repository name (e.g., `'/my-repo/'`).
 
@@ -43,6 +44,7 @@ This command builds the application using Next.js static export and pushes the `
 This is a modern React application built with TypeScript, Next.js, Tailwind CSS, and shadcn/ui components. It features excellent mobile responsiveness, static export compatibility, and follows modern web development best practices.
 
 ### Key Architecture Patterns
+
 - **React 19**: Latest React with modern hooks and state management
 - **Next.js 15**: App Router with static export for GitHub Pages compatibility
 - **TypeScript**: Type-safe development with excellent IntelliSense
@@ -58,30 +60,36 @@ This is a modern React application built with TypeScript, Next.js, Tailwind CSS,
 app/
 ├── layout.tsx              # Next.js root layout with metadata and fonts
 ├── page.tsx                # Next.js page component (entry point)
-└── globals.css             # Global styles (moved from src/index.css)
+└── globals.css             # Global styles with Tailwind imports
 
 src/
 ├── components/
-│   ├── ui/                 # shadcn/ui base components (Button, Card, Dialog, Input)
-│   ├── AppContent.tsx      # Main application logic (extracted from App.tsx)
+│   ├── ui/                 # shadcn/ui base components
+│   │   ├── button.tsx      # Button component with variants (consolidated)
+│   │   ├── card.tsx        # Card component
+│   │   ├── dialog.tsx      # Dialog/modal component
+│   │   └── input.tsx       # Input component
+│   ├── AppContent.tsx      # Main application logic and UI
 │   ├── DebtSummary.tsx     # Financial summary cards component
-│   ├── DebtTable.tsx       # Responsive debt table/card component  
+│   ├── DebtTable.tsx       # Responsive debt table/card component
 │   └── ReorderButton.tsx   # Mobile-friendly select-and-move reordering
 ├── hooks/
 │   ├── useDebtManager.ts   # Custom hook for complete state management
 │   └── useClientStorage.ts # SSR-compatible localStorage hook with hydration
 ├── lib/
-│   └── utils.ts            # Utility functions and helpers
-├── types/
-│   └── debt.ts             # TypeScript interfaces (Person, Debt, DebtManagerState)
-└── index.css               # Tailwind imports and custom styles
+│   └── utils.ts            # Utility functions and helpers (cn, clsx)
+└── types/
+    └── debt.ts             # TypeScript interfaces (Person, Debt, DebtManagerState)
 
 next.config.js              # Next.js configuration for static export
 tailwind.config.js          # Tailwind CSS configuration
-tsconfig.json              # TypeScript configuration with path aliases
+tsconfig.json              # TypeScript configuration with path aliases (@/ -> src/)
+postcss.config.js           # PostCSS configuration for Tailwind
+package.json                # Dependencies and build scripts
 ```
 
 ### Key Application Features
+
 - **Person & Debt Management**: Add/edit/remove people and their associated debts
 - **Hidden Debts**: Mark debts as hidden to exclude from total calculations
 - **Debt Actions**: Edit, duplicate, and remove individual debts with confirmations
@@ -103,7 +111,9 @@ tsconfig.json              # TypeScript configuration with path aliases
 6. Test static export builds with `npm run build`
 
 ### Manual Testing Scenarios
+
 Always test these scenarios after making changes:
+
 - Add/edit/remove persons and debts
 - Duplicate debts and verify functionality
 - Toggle hidden debts and verify total calculations exclude hidden amounts
@@ -118,7 +128,7 @@ Always test these scenarios after making changes:
 
 ## Code Style & Patterns
 
-- **ESLint Configuration**: TypeScript-aware ESLint with Next.js and React rules
+- **ESLint Configuration**: Migrated to ESLint CLI (from deprecated next lint) with TypeScript-aware rules
 - **TypeScript**: Strict type checking enabled, interfaces defined in types/debt.ts
 - **Next.js Patterns**: App Router structure, server/client component separation
 - **State Management**: useDebtManager hook centralizes all application state and actions
@@ -145,9 +155,11 @@ Always test these scenarios after making changes:
 - **src/components/DebtTable.tsx**: Person and debt management UI, form interactions
 - **src/components/DebtSummary.tsx**: Financial summary display and calculations
 - **src/components/ReorderButton.tsx**: Mobile-friendly reordering functionality
-- **src/components/ui/**: When modifying base shadcn/ui components
+- **src/components/ui/button.tsx**: Button component with consolidated variants (no separate button-variants.ts)
+- **src/components/ui/**: Other base shadcn/ui components (card, dialog, input)
 - **src/types/debt.ts**: When adding new TypeScript interfaces or modifying existing ones
 - **app/layout.tsx**: Site metadata, fonts, and global layout configuration
+- **app/globals.css**: Global styles, Tailwind imports, and custom CSS
 - **next.config.js**: Static export configuration and GitHub Pages settings
 
 ## Critical Data Persistence Requirements
@@ -160,3 +172,5 @@ Always test these scenarios after making changes:
 - Client-side hydration ensures data loads correctly after Next.js static generation
 - Never modify localStorage keys without migration strategy
 - Always test in both development and production builds
+
+Always update copilot-instructions.md, README.md, and this file (CLAUDE.md) with any significant changes to architecture, commands, or deployment process.
