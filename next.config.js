@@ -6,10 +6,6 @@ const nextConfig = {
   // Add trailing slash for better compatibility
   trailingSlash: true,
   
-  // Configure base path for GitHub Pages (disabled in development)
-  basePath: process.env.NODE_ENV === 'production' ? '/Financial-Manager' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/Financial-Manager/' : '',
-  
   // Disable image optimization for static export
   images: {
     unoptimized: true

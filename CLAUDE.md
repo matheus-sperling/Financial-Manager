@@ -26,21 +26,27 @@ npm test
 
 ## 🚢 Deployment to GitHub Pages
 
-This project is configured for one-command deployment to GitHub Pages using Next.js static export.
+This project is configured for **automatic deployment to GitHub Pages** using GitHub Actions with Next.js static export.
 
-```bash
-# Deploy to GitHub Pages
-npm run deploy
-```
+### Automatic Deployment
 
-This command builds the application using Next.js static export and pushes the `dist` directory to the `gh-pages` branch.
+Deployment happens automatically on every push to the `main` branch via GitHub Actions workflow (`.github/workflows/nextjs.yml`):
 
-**Current Configuration**: This repository is configured for `matheus-sperling/Financial-Manager` and deploys to `https://matheus-sperling.github.io/Financial-Manager/`
+1. **Push to main branch** - triggers the deployment workflow
+2. **GitHub Actions builds** - runs `next build` and creates static files in `dist/`
+3. **Automatic deployment** - GitHub Actions deploys to GitHub Pages
+4. **Live site updated** - changes are live at `https://matheus-sperling.github.io/Financial-Manager/`
 
-**Forking**: If you fork this repository, you must update two files for deployment to work correctly:
+### Manual Deployment (if needed)
 
-1.  `package.json`: Update the `homepage` field to your new GitHub Pages URL.
-2.  `next.config.js`: Update the `basePath` and `assetPrefix` fields to your new repository name (e.g., `'/my-repo/'`).
+You can also trigger deployment manually:
+- Go to repository **Actions** tab
+- Select "Deploy Next.js site to Pages" workflow  
+- Click "Run workflow"
+
+**Current Configuration**: This repository deploys to `https://matheus-sperling.github.io/Financial-Manager/`
+
+**Forking**: If you fork this repository, **no configuration changes needed** - GitHub Actions automatically handles the repository name and base paths.
 
 ## Project Architecture
 
@@ -148,7 +154,7 @@ Always test these scenarios after making changes:
 - **Theme System**: data-theme attribute switching with Tailwind dark: modifier
 - **Internationalization**: Translation objects with browser language detection
 - **Path Aliases**: @/ alias configured for src/ directory in tsconfig.json
-- **Static Export**: next.config.js configured for GitHub Pages deployment
+- **Static Export**: next.config.js configured for GitHub Pages with automatic GitHub Actions deployment
 
 ## Frequently Modified Files
 
@@ -163,7 +169,8 @@ Always test these scenarios after making changes:
 - **src/types/debt.ts**: When adding new TypeScript interfaces or modifying existing ones
 - **app/layout.tsx**: Site metadata, fonts, and global layout configuration
 - **app/globals.css**: Global styles, Tailwind imports, and custom CSS
-- **next.config.js**: Static export configuration and GitHub Pages settings
+- **next.config.js**: Static export configuration for automated GitHub Actions deployment
+- **.github/workflows/nextjs.yml**: GitHub Actions workflow for automatic deployment
 
 ## Critical Data Persistence Requirements
 
@@ -177,3 +184,10 @@ Always test these scenarios after making changes:
 - Always test in both development and production builds
 
 ## Always update copilot-instructions.md, README.md, and this file (CLAUDE.md) with any significant changes to architecture, commands, or deployment process.
+
+## GitHub Actions Deployment
+
+The project uses automated GitHub Actions deployment with these key files:
+- `.github/workflows/nextjs.yml` - Main deployment workflow
+- `next.config.js` - Next.js configuration for static export
+- No manual deployment commands needed - deployment is fully automated on push to main
