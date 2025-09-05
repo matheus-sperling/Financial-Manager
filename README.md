@@ -45,21 +45,63 @@ A simple and intuitive web application to manage your personal debts with other 
    - Toggle language with the flag button (EN/PT)
    - Switch currency with the dollar/real button (USD/BRL)
 
+## 🛠️ Development Commands
+
+```bash
+# Setup
+npm install
+
+# Development server with hot reload on http://localhost:3000
+npm run dev
+
+# Build for production (Next.js static export)
+npm run build
+
+# Start production server (after build)
+npm run start
+
+# Alternative build command (same as build)
+npm run export
+
+# Preview production build (same as start)
+npm run preview
+
+# Code quality - ALWAYS run before committing
+npm run lint
+
+# Fix linting issues automatically
+npm run lint:fix
+
+# Type checking
+npm run type-check
+
+# Tests (no tests configured)
+npm test
+```
+
 ## 🚢 Deployment to GitHub Pages
 
-This project is pre-configured for easy deployment to GitHub Pages.
+This project is configured for **automatic deployment to GitHub Pages** using GitHub Actions with Next.js static export.
 
-1.  **Deploy the application**:
-    ```bash
-    npm run deploy
-    ```
-    This command will automatically build the project and push the contents of the `dist` folder to the `gh-pages` branch on your repository. Your site will be available at the URL specified in your repository's settings.
+### Automatic Deployment
 
-2.  **For Forks**: If you have forked this repository, you need to update two files before deploying:
-    *   In `package.json`, change the `homepage` value to your GitHub Pages URL (e.g., `https://<your-username>.github.io/<your-repo-name>/`).
-    *   In `next.config.js`, change the `basePath` and `assetPrefix` values to your repository name (e.g., `basePath: '/<your-repo-name>', assetPrefix: '/<your-repo-name>/'`).
+Deployment happens automatically on every push to the `main` branch via GitHub Actions workflow (`.github/workflows/nextjs.yml`):
 
-    **Current configuration**: This repository is configured for `matheus-sperling/Financial-Manager` and deploys to `https://matheus-sperling.github.io/Financial-Manager/`
+1. **Push to main branch** - triggers the deployment workflow
+2. **GitHub Actions builds** - runs `next build` and creates static files in `dist/`
+3. **Automatic deployment** - GitHub Actions deploys to GitHub Pages
+4. **Live site updated** - changes are live at `https://matheus-sperling.github.io/Financial-Manager/`
+
+### Manual Deployment (if needed)
+
+You can also trigger deployment manually:
+- Go to repository **Actions** tab
+- Select "Deploy Next.js site to Pages" workflow  
+- Click "Run workflow"
+
+**Current Configuration**: This repository deploys to `https://matheus-sperling.github.io/Financial-Manager/`
+
+**Forking**: If you fork this repository, **no configuration changes needed** - GitHub Actions automatically handles the repository name and base paths.
 
 ## 📁 Project Structure
 
@@ -81,14 +123,20 @@ Financial-Manager/
 │   │   └── useClientStorage.ts # SSR-compatible localStorage
 │   ├── lib/
 │   │   └── utils.ts            # Utility functions
-│   ├── types/
-│   │   └── debt.ts             # TypeScript definitions
-│   └── index.css               # Tailwind imports and styles
-├── next.config.js              # Next.js configuration
+│   └── types/
+│       └── debt.ts             # TypeScript definitions
+├── .github/
+│   └── workflows/
+│       └── nextjs.yml          # GitHub Actions deployment workflow
+├── next.config.js              # Next.js configuration for static export
 ├── package.json                # Dependencies and scripts
-├── tsconfig.json              # TypeScript configuration
+├── tsconfig.json              # TypeScript configuration with path aliases
 ├── tailwind.config.js         # Tailwind CSS configuration
-└── README.md                  # Documentation
+├── postcss.config.js           # PostCSS configuration for Tailwind
+├── eslint.config.mjs          # ESLint configuration
+├── CLAUDE.md                   # AI assistant development guidance
+├── LICENSE                     # MIT License
+└── README.md                  # Project documentation
 ```
 
 ## 💡 Detailed Features
