@@ -172,14 +172,9 @@ function App() {
                 onDuplicateDebt={actions.duplicateDebt}
                 onToggleHidden={actions.toggleDebtHidden}
                 onRemovePerson={actions.removePerson}
-<<<<<<< HEAD
                 onUpdatePersonName={actions.updatePersonName}
                 onReorderDebts={actions.reorderDebts}
                 totalPeople={state.people.length}
-=======
-                onReorderDebts={actions.reorderDebts}
-                onReorderPeople={actions.reorderPeople}
->>>>>>> 59dc0d116b39c4fe7456462533bb46405cb135cd
               />
             ))}
           </div>
